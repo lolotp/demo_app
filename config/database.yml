@@ -20,7 +20,7 @@ test:
   username: lolo
   password: lolo
   encoding: utf8
-  database: demo_app-dev
+  database: demo_app-test
 
 production:
   adapter: sqlite3
