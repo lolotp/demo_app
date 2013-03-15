@@ -10,7 +10,11 @@ class SessionsController < ApplicationController
       if (mobile_flag and mobile_flag == "1")
         sign_in user
         respond_to do |format|
-            format.html { render:text => "OK" }
+            if user[:name]
+              format.html { render:text => user[:name] }
+            else
+              format.html { render:text => user[:email] } 
+            end
         end
       else 
         sign_in user
