@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
     else
       if (mobile_flag and mobile_flag == "1")
         respond_to do |format|
-          format.html { render:text => "Unauthorized", :status => 400 }
+          format.html { render:text => "Unauthorized", :status => 401 }
         end
       else
         flash.now[:error] = 'Invalid email/password combination' # Not quite right!
