@@ -1,4 +1,6 @@
 DemoApp::Application.routes.draw do
+  post "sessions/create"
+
   resources :users
 
   root to: 'static_pages#home'
