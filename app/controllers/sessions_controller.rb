@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
     user = User.find_by_email(params[:session][:email].downcase)
     mobile_flag = params[:is_mobile]
     if user && user.authenticate(params[:session][:password])
-      if (mobile_flag and mobile_flag == 1)
+      if (mobile_flag and mobile_flag == "1")
         sign_in user
         respond_to do |format|
             format.html { render:text => "OK" }
@@ -17,7 +17,7 @@ class SessionsController < ApplicationController
         redirect_to user
       end
     else
-      if (mobile_flag and mobile_flag == 1)
+      if (mobile_flag and mobile_flag == "1")
         respond_to do |format|
           format.html { render:text => "Unauthorized", :status => 400 }
         end
