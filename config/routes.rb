@@ -1,5 +1,6 @@
 DemoApp::Application.routes.draw do
   post "sessions/create"
+  get  "users/get_posts"
 
   resources :users
 
