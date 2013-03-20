@@ -2,7 +2,9 @@ class MicropostsController < ApplicationController
   def new
     mobile_flag = params[:is_mobile]
     if (mobile_flag and mobile_flag == "1")
-      new_mobile  
+      new_mobile
+    else
+    end  
   end
   
   def new_mobile
