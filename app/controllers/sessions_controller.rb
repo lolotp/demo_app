@@ -26,7 +26,7 @@ class SessionsController < ApplicationController
           format.html { render:text => "Unauthorized", :status => 401 }
         end
       else
-        flash.now[:error] = 'Invalid email/password combination' # Not quite right!
+        flash.now[:error] = 'Invalid email/password combination'
         render 'new'
       end
     end
