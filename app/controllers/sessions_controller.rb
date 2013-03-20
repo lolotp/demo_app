@@ -11,7 +11,8 @@ class SessionsController < ApplicationController
         sign_in user
         respond_to do |format|
             if user[:name]
-              format.html { render:text => user[:name] }
+              s = user[:name] + "#" + user[:id].to_s
+              format.html { render:text => s }
             else
               format.html { render:text => user[:email] } 
             end
