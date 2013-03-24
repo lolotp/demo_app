@@ -5,24 +5,18 @@ class SessionsController < ApplicationController
   
   def create
     user = User.find_by_email(params[:session][:email].downcase)
-    mobile_flag = params[:is_mobile]
     if user && user.authenticate(params[:session][:password])
-      if (mobile_flag and mobile_flag == "1")
-        sign_in user
+      sign_in user
+      if (is_mobile?)
         respond_to do |format|
-            if user[:name]
-              s = user[:name] + "#" + user[:id].to_s
-              format.html { render:text => s }
-            else
-              format.html { render:text => user[:email] } 
-            end
+          s = (user[:name] ? user[:name] : user[:email]) + "#" + user[:id].to_s
+          format.html { render:text => s }
         end
       else 
-        sign_in user
-        redirect_to user
+        redirect_back_or user
       end
     else
-      if (mobile_flag and mobile_flag == "1")
+      if (is_mobile?)
         respond_to do |format|
           format.html { render:text => "Unauthorized", :status => 401 }
         end

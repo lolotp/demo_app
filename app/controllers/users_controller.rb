@@ -1,49 +1,86 @@
 class UsersController < ApplicationController
+  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy]
+  before_filter :correct_user,   only: [:edit, :update]
+  before_filter :admin_user, only: :destroy
+
   def new
     @user = User.new
   end
   
   def show
-    mobile_flag = params[:is_mobile]
-    if (mobile_flag and mobile_flag == "1")
-      show_mobile
-    else
-      if (signed_in? and current_user[:id] == params[:id])
-        @user = User.find(params[:id])
-        #@user = current_user
-      else
-        flash[:signin_first] = "Please sign in first"
-        redirect_to signin_path
-      end
-    end
+    @user = User.find_by_id(params[:id])
   end
   
   def create
     @user = User.new(params[:user])
     if @user.save
-      # Handle a successful save.
+      sign_in @user
+      flash[:success] = "Welcome to the Sample App!"
+      redirect_to @user
     else
       render 'new'
     end
   end
   
-  def show_mobile
-    respond_to do |format|
-      if (signed_in?)
-        ret_str = ""
-        init = true
-        current_user.microposts.each do |s|
-          if init
-            ret_str = s[:content]
-            init = false
-          else
-            ret_str = ret_str + "#" + s[:content]
-          end
-        end
-        format.html { render :text => ret_str }
-      else
-        format.html { render :text => "Unauthorized", :status => 401 }
-      end
+  def edit
+  end
+
+  def update
+    if @user.update_attributes(params[:user])
+      flash[:success] = "Profile updated"
+      sign_in @user
+      redirect_to @user
+    else
+      render 'edit'
     end
   end
+  
+  def index
+    @users = User.paginate(page: params[:page])
+  end
+
+  def destroy
+    User.find(params[:id]).destroy
+    flash[:success] = "User destroyed."
+    redirect_to users_url
+  end
+
+  def show_mobile
+    respond_to do |format|
+      ret_str = ""
+      init = true
+      current_user.microposts.each do |s|
+        if init
+          ret_str = s[:content]
+          init = false
+        else
+          ret_str = ret_str + "#" + s[:content]
+        end
+      end
+      format.html { render :text => ret_str }
+    end
+  end
+  
+  private    
+    def signed_in_user
+      unless signed_in?
+        if (is_mobile?) 
+          respond_to do |format|
+            format.html { render :text => "Unauthorized", :status => 401 }
+          end
+        else
+          store_location
+          redirect_to signin_url, notice: "Please sign in." 
+        end
+      end
+    end
+
+    def correct_user
+      @user = User.find(params[:id])
+      redirect_to(root_path) unless current_user?(@user)
+    end
+    
+    def admin_user
+      redirect_to(root_path) unless current_user.admin?
+    end
 end
