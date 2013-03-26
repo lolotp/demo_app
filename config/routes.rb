@@ -1,6 +1,7 @@
 DemoApp::Application.routes.draw do
   post "sessions/create"
   post "microposts/new"
+  get  "users/show_mobile"
 
   resources :users
 
