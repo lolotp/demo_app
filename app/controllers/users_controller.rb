@@ -9,6 +9,7 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find_by_id(params[:id])
+    @posts = @user.posts.paginate(page: params[:page])
   end
   
   def create
@@ -61,19 +62,7 @@ class UsersController < ApplicationController
     end
   end
   
-  private    
-    def signed_in_user
-      unless signed_in?
-        if (is_mobile?) 
-          respond_to do |format|
-            format.html { render :text => "Unauthorized", :status => 401 }
-          end
-        else
-          store_location
-          redirect_to signin_url, notice: "Please sign in." 
-        end
-      end
-    end
+  private
 
     def correct_user
       @user = User.find(params[:id])

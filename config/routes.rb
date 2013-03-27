@@ -1,9 +1,12 @@
 DemoApp::Application.routes.draw do
+
   post "sessions/create"
   post "microposts/new"
   get  "users/show_mobile"
 
   resources :users
+  resources :sessions,   only: [:new, :create, :destroy]
+  resources :posts, only: [:create, :destroy]
 
   root to: 'static_pages#home'
 
@@ -14,8 +17,6 @@ DemoApp::Application.routes.draw do
   match '/signup',  to: 'users#new'
   match '/signin',  to: 'sessions#new'
   match '/signout', to: 'sessions#destroy', via: :delete
-  
-  resources :sessions, only: [:new, :create, :destroy]
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
