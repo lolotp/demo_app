@@ -20,6 +20,18 @@ namespace :db do
         content = Faker::Lorem.sentence(5)
         users.each { |user| user.posts.create!(content: content, latitude: 120.0, longitude: 120.0, rating: 5) }
       end
+      
+    make_relationships
+  end
+  
+  def make_relationships
+    users = User.all
+    user  = users.first
+    friends = users[2..50]
+    friends.each do |f| 
+      user.request_friend!(f)
+      f.accept_friend!(user)
+    end
   end
 end
 

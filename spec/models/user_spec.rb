@@ -20,6 +20,15 @@ describe User do
   it { should respond_to(:microposts) }
   it { should respond_to(:posts) }
   it { should respond_to(:feed) }
+  it { should respond_to(:friendships) }
+  it { should respond_to(:friends) }
+  it { should respond_to(:pending_friends) }
+  it { should respond_to(:requested_friends) }
+  it { should respond_to(:friend?) }
+  it { should respond_to(:request_friend!) }
+  it { should respond_to(:accept_friend!) }
+  it { should respond_to(:unfriend!) }
+
 
   it { should be_valid }
   it { should_not be_admin }
@@ -174,10 +183,67 @@ describe User do
       let(:unfollowed_post) do
         FactoryGirl.create(:post, user: FactoryGirl.create(:user))
       end
+      let(:friend) { FactoryGirl.create(:user) }
 
+      before do
+        @user.request_friend!(friend)
+        friend.accept_friend!(@user)
+        3.times { friend.posts.create!(content: "Lorem ipsum") }
+      end
+      
       its(:feed) { should include(newer_post) }
       its(:feed) { should include(older_post) }
       its(:feed) { should_not include(unfollowed_post) }
+      its(:feed) do
+        friend.posts.each do |p|
+          should include(p)
+        end
+      end
+    end
+  end
+  
+  describe "friend request" do
+    let(:other_user) { FactoryGirl.create(:user) }    
+    before do
+      @user.save
+      @user.request_friend!(other_user)
+    end
+    
+    it { should_not be_friend(other_user) }
+    its(:pending_friends) { should include(other_user) }
+    
+    describe "other friend" do
+      subject { other_user }
+      its(:requested_friends) { should include(@user) }
+    end
+  end
+  
+  describe "friending" do
+    let(:other_user) { FactoryGirl.create(:user) }    
+    before do
+      @user.save
+      @user.request_friend!(other_user)
+      other_user.accept_friend!(@user)
+    end
+
+    it { should be_friend(other_user) }
+    its(:friends) { should include(other_user) }
+    
+    describe "other friend" do
+      subject { other_user }
+      its(:friends) { should include(@user) }
+    end
+    
+    describe "and unfriend" do
+      before { @user.unfriend!(other_user) }
+
+      it { should_not be_friend(other_user) }
+      its(:friends) { should_not include(other_user) }
+      
+      describe "other friend" do
+        subject { other_user }
+        its(:friends) { should_not include(@user) }
+      end
     end
   end
 end

@@ -73,6 +73,117 @@ describe "UserPages" do
       it { should have_content(p2.content) }
       it { should have_content(user.posts.count) }
     end
+    
+    describe "friend/unfriend buttons" do
+      let(:other_user) { FactoryGirl.create(:user) }
+      before { sign_in user }
+
+      describe "adding a user as friend" do
+        before { visit user_path(other_user) }
+
+        it "should increment the pending friends count" do
+          expect do
+            click_button "Add friend"
+          end.to change(user.pending_friends, :count).by(1)
+        end
+
+        it "should increment the other user's requested friends count" do
+          expect do
+            click_button "Add friend"
+          end.to change(other_user.requested_friends, :count).by(1)
+        end
+
+        describe "toggling the button" do
+          before { click_button "Add friend" }
+          it { should have_selector('input', value: 'Cancel pending request') }
+        end
+      end
+      
+      describe "accepting a friend request" do
+        before do 
+          other_user.request_friend!(user)
+          visit user_path(other_user)
+        end
+        
+        it "should increase the friends count" do
+          expect do
+            click_button "Accept pending request"
+          end.to change(user.friends, :count).by(1)
+        end
+        
+        it "should decrease the requested friends count" do
+          expect do
+            click_button "Accept pending request"
+          end.to change(user.requested_friends, :count).by(-1)
+        end
+        
+        it "should increase the other's friends count" do
+          expect do
+            click_button "Accept pending request"
+          end.to change(other_user.friends, :count).by(1)
+        end
+        
+        it "should decrease the other's pending friends count" do
+          expect do
+            click_button "Accept pending request"
+          end.to change(other_user.pending_friends, :count).by(-1)
+        end
+        
+        describe "toggling the button" do
+          before { click_button "Accept pending request" }
+          it { should have_selector('input', value: 'Unfriend') }
+        end
+      end
+      
+      describe "cancelling a friend request" do
+        before do 
+          user.request_friend!(other_user)
+          visit user_path(other_user)
+        end
+        
+        it "should decrease pending friends count" do
+          expect do
+            click_button "Cancel pending request"
+          end.to change(user.pending_friends, :count).by(-1)
+        end
+        
+        it "should decrease other's requested friends count" do
+          expect do
+            click_button "Cancel pending request"
+          end.to change(other_user.requested_friends, :count).by(-1)
+        end
+        
+        describe "toggling the button" do
+          before { click_button "Cancel pending request" }
+          it { should have_selector('input', value: 'Add friend') }
+        end
+      end
+
+      describe "unfriending a user" do
+        before do
+          user.request_friend!(other_user)
+          other_user.accept_friend!(user)
+          visit user_path(other_user)
+        end
+
+        it "should decrement the friends count" do
+          expect do
+            click_button "Unfriend"
+          end.to change(user.friends, :count).by(-1)
+        end
+
+        it "should decrement the other user's friends count" do
+          expect do
+            click_button "Unfriend"
+          end.to change(other_user.friends, :count).by(-1)
+        end
+
+        describe "toggling the button" do
+          before { click_button "Unfriend" }
+          it { should have_selector('input', value: 'Add friend') }
+        end
+      end
+    end
   end
   
   describe "signup" do
@@ -141,6 +252,37 @@ describe "UserPages" do
       it { should have_link('Sign out', href: signout_path) }
       specify { user.reload.name.should  == new_name }
       specify { user.reload.email.should == new_email }
+    end
+  end
+
+  describe "friends" do
+    let(:user) { FactoryGirl.create(:user) }
+    let(:other_user) { FactoryGirl.create(:user) }
+    before do
+      user.request_friend!(other_user)
+      other_user.accept_friend!(user)
+    end
+
+    describe "other friend" do
+      before do
+        sign_in other_user
+        visit friends_user_path(other_user)
+      end
+
+      it { should have_selector('title', text: full_title('Friends')) }
+      it { should have_selector('h3', text: 'Friends') }
+      it { should have_link(user.name, href: user_path(user)) }
+    end
+    
+    describe "myself" do
+      before do
+        sign_in user
+        visit friends_user_path(user)
+      end
+
+      it { should have_selector('title', text: full_title('Friends')) }
+      it { should have_selector('h3', text: 'Friends') }
+      it { should have_link(other_user.name, href: user_path(other_user)) }
     end
   end
 end

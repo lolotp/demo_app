@@ -4,9 +4,14 @@ DemoApp::Application.routes.draw do
   post "microposts/new"
   get  "users/show_mobile"
 
-  resources :users
+  resources :users do
+    member do
+      get :friends
+    end
+  end
   resources :sessions,   only: [:new, :create, :destroy]
   resources :posts, only: [:create, :destroy]
+  resources :friendships, only: [:create, :destroy, :update]
 
   root to: 'static_pages#home'
 

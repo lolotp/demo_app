@@ -64,6 +64,19 @@ describe "Authentication" do
         end
       end
       
+      describe "in the Friendships controller" do
+        describe "submitting to the create action" do
+          before { post friendships_path }
+          specify { response.should redirect_to(signin_path) }
+        end
+
+        describe "submitting to the destroy action" do
+          before { delete friendship_path(1) }
+          specify { response.should redirect_to(signin_path) }          
+        end
+      end
+
+      
       describe "in the Users controller" do
 
         describe "visiting the edit page" do
@@ -78,6 +91,11 @@ describe "Authentication" do
         
         describe "visiting the user index" do
           before { visit users_path }
+          it { should have_selector('title', text: 'Sign in') }
+        end
+        
+        describe "visiting the friends page" do
+          before { visit friends_user_path(user) }
           it { should have_selector('title', text: 'Sign in') }
         end
       end

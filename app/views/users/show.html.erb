@@ -11,6 +11,7 @@
   </aside>
   
   <div class="span8">
+    <%= render 'friend_form' if signed_in? %>
     <% if @user.posts.any? %>
       <h3>Reviews posted (<%= @user.posts.count %>)</h3>
       <ol class="posts">
