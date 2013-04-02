@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130328070629) do
+ActiveRecord::Schema.define(:version => 20130402073004) do
 
   create_table "friendships", :force => true do |t|
     t.integer  "user_id"
@@ -44,10 +44,12 @@ ActiveRecord::Schema.define(:version => 20130328070629) do
     t.integer  "rating"
     t.float    "longitude"
     t.float    "latitude"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.string   "privacy_option", :default => "friends"
   end
 
+  add_index "posts", ["privacy_option"], :name => "index_posts_on_privacy_option"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at"
 
   create_table "users", :force => true do |t|
