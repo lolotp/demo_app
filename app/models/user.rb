@@ -34,6 +34,14 @@ class User < ActiveRecord::Base
     Post.from_friends(self)
   end
   
+  def feed_by_location(cur_lat, cur_long)
+    Post.from_friends_by_location(self, cur_lat, cur_long)
+  end
+  
+  def feed_by_social_radius(cur_lat, cur_long, levels)
+    Post.from_friends_by_social_radius(cur_lat, cur_long, levels)
+  end
+
   def friend?(other_user)
     f = friendships.find_by_friend_id(other_user.id)
     f and f.status == "accepted"
