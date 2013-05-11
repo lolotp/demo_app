@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
   end
   
   def feed_by_social_radius(cur_lat, cur_long, levels)
-    Post.from_friends_by_social_radius(cur_lat, cur_long, levels)
+    Post.from_friends_by_social_radius(self, cur_lat, cur_long, levels)
   end
 
   def friend?(other_user)

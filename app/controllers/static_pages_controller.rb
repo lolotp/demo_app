@@ -4,8 +4,9 @@ class StaticPagesController < ApplicationController
       @post  = current_user.posts.build
       lat = params[:latitude]
       long = params[:longitude]
-      if (lat and long)
-        @feed_items = current_user.feed_by_social_radius(lat,long).paginate(page: params[:page])
+      levels = params[:levels]
+      if (lat and long and levels)
+        @feed_items = current_user.feed_by_social_radius(lat,long, params[:levels]).paginate(page: params[:page])
       else
         @feed_items = current_user.feed.paginate(page: params[:page])
       end  
