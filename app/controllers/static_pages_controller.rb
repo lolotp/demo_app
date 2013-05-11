@@ -5,7 +5,7 @@ class StaticPagesController < ApplicationController
       lat = params[:latitude]
       long = params[:longitude]
       if (lat and long)
-        @feed_items = current_user.feed_by_location(lat,long).paginate(page: params[:page])
+        @feed_items = current_user.feed_by_social_radius(lat,long).paginate(page: params[:page])
       else
         @feed_items = current_user.feed.paginate(page: params[:page])
       end  
