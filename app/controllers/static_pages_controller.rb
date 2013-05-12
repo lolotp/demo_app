@@ -1,4 +1,6 @@
 class StaticPagesController < ApplicationController
+  before_filter :check_for_mobile, :only => [:home]
+
   def home
     if signed_in?
       @post  = current_user.posts.build

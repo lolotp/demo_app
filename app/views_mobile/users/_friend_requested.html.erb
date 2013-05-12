@@ -1,0 +1,4 @@
+<%= form_for(current_user.friendships.find_by_friend_id(@user), remote: true) do |f| %>
+  <%= f.submit "Accept pending request", class: "btn btn-large btn-primary" %>
+<% end %>
+
