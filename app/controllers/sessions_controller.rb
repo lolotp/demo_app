@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
-
+  before_filter :check_for_mobile, :only => [:create]
+  
   def new
   end
   
@@ -7,23 +8,16 @@ class SessionsController < ApplicationController
     user = User.find_by_email(params[:session][:email].downcase)
     if user && user.authenticate(params[:session][:password])
       sign_in user
-      if (is_mobile?)
+      redirect_back_or user      
+    else      
+      if mobile_device?
         respond_to do |format|
-          s = (user[:name] ? user[:name] : user[:email]) + "#" + user[:id].to_s
-          format.html { render:text => s }
-        end
-      else 
-        redirect_back_or user
-      end
-    else
-      if (is_mobile?)
-        respond_to do |format|
-          format.html { render:text => "Unauthorized", :status => 401 }
+          format.json {render json: "Unable to authenticate user"}
         end
       else
         flash.now[:error] = 'Invalid email/password combination'
         render 'new'
-      end
+      end  
     end
 
   end
