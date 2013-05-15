@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
     else      
       if mobile_device?
         respond_to do |format|
-          format.json {render json: "Unable to authenticate user"}
+          format.json {render json: "Unable to authenticate user", :status => 404}
         end
       else
         flash.now[:error] = 'Invalid email/password combination'
