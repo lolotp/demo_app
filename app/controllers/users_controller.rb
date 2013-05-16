@@ -18,7 +18,7 @@ class UsersController < ApplicationController
     if @user.save
       sign_in @user
       flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user        
+      redirect_to root_path        
     else
       respond_to do |format|
         format.json { render json: "Error registering user: " + @user.errors.full_messages.first, :status => 404 }

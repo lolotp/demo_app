@@ -25,8 +25,9 @@ module SessionsHelper
     cookies.delete(:remember_token)
   end
   
-  def redirect_back_or(default)
-    redirect_to(session[:return_to] || default)
+  def redirect_back_or(default, lat, long)
+    redirect_path = session[:return_to] || url_for(default)
+    redirect_to (redirect_path.to_s + "?" + {:latitude => lat, :longitude => long}.to_query)
     session.delete(:return_to)
   end
 
