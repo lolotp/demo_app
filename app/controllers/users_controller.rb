@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends]
   before_filter :correct_user,   only: [:edit, :update]
   before_filter :admin_user, only: :destroy
+  before_filter :check_for_mobile, :only => [:create]
 
   def new
     @user = User.new
@@ -17,9 +18,15 @@ class UsersController < ApplicationController
     if @user.save
       sign_in @user
       flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user
+      redirect_to @user        
     else
-      render 'new'
+      if mobile_device?
+        respond_to do |format|
+          format.json { render json: "Error registering user: " + @user.errors.full_messages.first, :status => 404 }
+        end
+      else
+        render 'new'
+      end  
     end
   end
   
