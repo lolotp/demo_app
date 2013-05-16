@@ -20,13 +20,10 @@ class UsersController < ApplicationController
       flash[:success] = "Welcome to the Sample App!"
       redirect_to @user        
     else
-      if mobile_device?
-        respond_to do |format|
-          format.json { render json: "Error registering user: " + @user.errors.full_messages.first, :status => 404 }
-        end
-      else
-        render 'new'
-      end  
+      respond_to do |format|
+        format.json { render json: "Error registering user: " + @user.errors.full_messages.first, :status => 404 }
+        format.html { render 'new' }
+      end
     end
   end
   

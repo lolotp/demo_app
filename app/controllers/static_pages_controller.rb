@@ -11,6 +11,10 @@ class StaticPagesController < ApplicationController
         @feed_items = current_user.feed_by_social_radius(lat,long, params[:levels]).paginate(page: params[:page])
       else
         @feed_items = current_user.feed.paginate(page: params[:page])
+      end
+      respond_to do |format|
+        format.html {}
+        format.json { render json: @feed_items }
       end  
     end
   end
