@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
       sign_in user
       lat = params[:latitude]
       long = params[:longitude]
-      redirect_back_or(user, lat, long)       
+      redirect_back_or(root_path, lat, long)       
     else      
       respond_to do |format|
         format.json {render json: "Unable to authenticate user", :status => 404}
