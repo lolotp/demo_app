@@ -14,7 +14,7 @@ class StaticPagesController < ApplicationController
       end
       respond_to do |format|
         format.html {}
-        format.json { render json: @feed_items }
+        format.json { render json: { :post_list => @feed_items, :user => current_user } }
       end  
     end
   end
