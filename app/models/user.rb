@@ -104,6 +104,10 @@ class User < ActiveRecord::Base
       end
     end
   end
+  
+  def self.find_matched_users(search_string)    
+    where("name LIKE '%#{search_string}%' OR email LIKE '%#{search_string}%'")
+  end
 
 private
 

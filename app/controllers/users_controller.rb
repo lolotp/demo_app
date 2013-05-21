@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends]
   before_filter :correct_user,   only: [:edit, :update]
   before_filter :admin_user, only: :destroy
-  before_filter :check_for_mobile, :only => [:create, :friends]
+  before_filter :check_for_mobile, :only => [:create, :friends, :find_users]
 
   def new
     @user = User.new
@@ -58,6 +58,14 @@ class UsersController < ApplicationController
       format.html { render 'show_friends' }
       format.json { render json: @users }
     end   
+  end
+  
+  def find_users
+    search_string = params[:search_string]
+    @found_users = User.find_matched_users(search_string).paginate(page: params[:page])
+    respond_to do |format|
+      format.json {render json: @found_users}
+    end
   end
 
   def show_mobile

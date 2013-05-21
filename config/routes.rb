@@ -7,6 +7,7 @@ DemoApp::Application.routes.draw do
   resources :users do
     member do
       get :friends
+      get :find_users
     end
   end
   resources :sessions,   only: [:new, :create, :destroy]
