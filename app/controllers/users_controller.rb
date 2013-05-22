@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends]
   before_filter :correct_user,   only: [:edit, :update]
   before_filter :admin_user, only: :destroy
-  before_filter :check_for_mobile, :only => [:create, :friends, :find_users]
+  before_filter :check_for_mobile, :only => [:create, :friends, :find_users, :get_relation]
 
   def new
     @user = User.new
@@ -79,8 +79,16 @@ class UsersController < ApplicationController
         else
           ret_str = ret_str + "#" + s[:content]
         end
-      end
+      end 
       format.html { render :text => ret_str }
+    end
+  end
+  
+  def get_relation
+    other_user_id = params[:other_user]
+    @friendship = current_user.friendships.find_by_friend_id(other_user_id)
+    respond_to do |format|
+      format.json { render json: @friendship.status }
     end
   end
   
