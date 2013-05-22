@@ -1,5 +1,6 @@
 class FriendshipsController < ApplicationController
   before_filter :signed_in_user
+  before_filter :check_for_mobile, :only => [:create, :destroy, :update]
   
   def create
     @user = User.find(params[:friendship][:friend_id])
@@ -7,6 +8,7 @@ class FriendshipsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @user }
       format.js
+      format.json { current_user.friendships.find_by_friend_id(@user).status }
     end
   end
 
@@ -21,6 +23,7 @@ class FriendshipsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @user }
       format.js
+      format.json { current_user.friendships.find_by_friend_id(@user).status }
     end
   end
   
@@ -33,6 +36,7 @@ class FriendshipsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @user }
       format.js
+      format.json { current_user.friendships.find_by_friend_id(@user).status }
     end
   end
 end
