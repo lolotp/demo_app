@@ -88,7 +88,7 @@ class UsersController < ApplicationController
     other_user_id = params[:other_user]
     @friendship = current_user.friendships.find_by_friend_id(other_user_id)
     respond_to do |format|
-      format.json { render json: @friendship.status }
+      format.json { render json: {:status => @friendship.status, :id => @friendship.id } }
     end
   end
   
