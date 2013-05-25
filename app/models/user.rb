@@ -108,6 +108,11 @@ class User < ActiveRecord::Base
   def self.find_matched_users(search_string)    
     where("name LIKE '%#{search_string}%' OR email LIKE '%#{search_string}%'")
   end
+  
+  def as_json(options={})
+    super(:only => [:name,:email,:id])
+  end
+
 
 private
 
