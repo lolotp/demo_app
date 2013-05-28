@@ -8,6 +8,7 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
+include ActionView::Helpers
 
 class User < ActiveRecord::Base
   attr_accessible :email, :name, :password, :password_confirmation
