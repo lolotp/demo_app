@@ -8,9 +8,10 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
-include ActionView::Helpers
+
 
 class User < ActiveRecord::Base
+  include UsersHelper
   attr_accessible :email, :name, :password, :password_confirmation
   has_secure_password
 
@@ -109,10 +110,17 @@ class User < ActiveRecord::Base
   def self.find_matched_users(search_string)    
     where("name LIKE '%#{search_string}%' OR email LIKE '%#{search_string}%'")
   end
-  
+
+  def gravatar_url(options = { size: 50 })
+    gravatar_id = Digest::MD5::hexdigest(self.email.downcase)
+    size = options[:size]
+    return_url = "https://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}"
+    return_url
+  end  
+
   def as_json(options={})
     json_obj = super(:only => [:name,:email,:id])
-    json_obj[:avatar_img] = gravatar_for self
+    json_obj[:avatar_img] = self.gravatar_url
     json_obj
   end
 
