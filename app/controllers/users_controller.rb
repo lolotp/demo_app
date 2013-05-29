@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends]
-  before_filter :correct_user,   only: [:edit, :update]
+  before_filter :correct_user,   only: [:edit, :update, :friends]
   before_filter :admin_user, only: :destroy
   before_filter :check_for_mobile, :only => [:create, :friends, :find_users, :get_relation]
 
