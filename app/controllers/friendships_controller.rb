@@ -5,10 +5,11 @@ class FriendshipsController < ApplicationController
   def create
     @user = User.find(params[:friendship][:friend_id])
     current_user.request_friend!(@user)
+    friendship = current_user.friendships.find_by_friend_id(@user)
     respond_to do |format|
       format.html { redirect_to @user }
       format.js
-      format.json { current_user.friendships.find_by_friend_id(@user).status }
+      format.json { :status => friendship.status, :id => friendship.id }
     end
   end
 
@@ -20,10 +21,11 @@ class FriendshipsController < ApplicationController
     elsif (f.status == "pending")
       current_user.cancel_request!(@user)
     end
+    friendship = current_user.friendships.find_by_friend_id(@user)
     respond_to do |format|
       format.html { redirect_to @user }
       format.js
-      format.json { current_user.friendships.find_by_friend_id(@user).status }
+      format.json { :status => friendship.status, :id => friendship.id }
     end
   end
   
@@ -33,10 +35,11 @@ class FriendshipsController < ApplicationController
     if f.status == "requested"
       current_user.accept_friend!(@user)
     end
+    friendship = current_user.friendships.find_by_friend_id(@user)
     respond_to do |format|
       format.html { redirect_to @user }
       format.js
-      format.json { current_user.friendships.find_by_friend_id(@user).status }
+      format.json { :status => friendship.status, :id => friendship.id }
     end
   end
 end
