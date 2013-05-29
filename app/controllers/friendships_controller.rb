@@ -9,7 +9,11 @@ class FriendshipsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @user }
       format.js
-      format.json { :status => friendship.status, :id => friendship.id }
+      if (friendship)
+        format.json { render json: {:status => friendship.status, :id => friendship.id } }
+      else
+        format.json { render json: {:status => friendship, :id => friendship } }
+      end
     end
   end
 
@@ -25,7 +29,11 @@ class FriendshipsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @user }
       format.js
-      format.json { :status => friendship.status, :id => friendship.id }
+      if (friendship)
+        format.json { render json: {:status => friendship.status, :id => friendship.id } }
+      else
+        format.json { render json: {:status => friendship, :id => friendship } }
+      end
     end
   end
   
@@ -39,7 +47,11 @@ class FriendshipsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @user }
       format.js
-      format.json { :status => friendship.status, :id => friendship.id }
+      if (friendship)
+        format.json { render json: {:status => friendship.status, :id => friendship.id } }
+      else
+        format.json { render json: {:status => friendship, :id => friendship } }
+      end
     end
   end
 end
