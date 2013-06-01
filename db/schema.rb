@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130402073004) do
+ActiveRecord::Schema.define(:version => 20130601094031) do
 
   create_table "friendships", :force => true do |t|
     t.integer  "user_id"
@@ -39,11 +39,11 @@ ActiveRecord::Schema.define(:version => 20130402073004) do
     t.string   "content"
     t.string   "file_url"
     t.integer  "user_id"
-    t.integer  "view_count"
-    t.integer  "like_count"
+    t.integer  "view_count",     :default => 0
+    t.integer  "like_count",     :default => 0
     t.integer  "rating"
-    t.float    "longitude"
-    t.float    "latitude"
+    t.float    "longitude",      :default => 0.0
+    t.float    "latitude",       :default => 0.0
     t.datetime "created_at",                            :null => false
     t.datetime "updated_at",                            :null => false
     t.string   "privacy_option", :default => "friends"
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(:version => 20130402073004) do
     t.string   "password_digest"
     t.string   "remember_token"
     t.boolean  "admin",           :default => false
+    t.string   "avatar_url"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
