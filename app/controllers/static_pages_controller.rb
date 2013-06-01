@@ -12,6 +12,7 @@ class StaticPagesController < ApplicationController
       else
         @feed_items = current_user.feed.paginate(page: params[:page])
       end
+        
       respond_to do |format|
         format.html {}
         format.json { render json: { :post_list => @feed_items, :user => current_user } }

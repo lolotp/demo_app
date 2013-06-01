@@ -36,5 +36,12 @@ class Post < ActiveRecord::Base
     end
     where("user_id IN (#{friend_user_ids}) OR user_id = :user_id AND (#{radius_filter})", 
           user_id: user.id)
-  end  
+  end
+
+  def as_json(options={})
+      json_obj = super
+      json_obj[:author_name] = self.user.name
+      json_obj[:author_avatar] = self.user.gravatar_url
+      json_obj
+  end
 end
