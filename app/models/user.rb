@@ -119,9 +119,7 @@ class User < ActiveRecord::Base
   end  
 
   def as_json(options={})
-    json_obj = super(:only => [:name,:email,:id])
-    json_obj[:avatar_img] = self.gravatar_url
-    json_obj
+    super(:only => [:name,:email,:id])
   end
 
 
