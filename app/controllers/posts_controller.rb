@@ -1,4 +1,5 @@
 class PostsController < ApplicationController
+  before_filter :check_for_mobile, :only => [:create]
   before_filter :signed_in_user 
   before_filter :correct_user,   only: :destroy
 
@@ -6,10 +7,19 @@ class PostsController < ApplicationController
     @post = current_user.posts.build(params[:post])
     if @post.save
       flash[:success] = "Review posted"
-      redirect_to root_url
+      if mobile_device?
+        respond_to do |format|
+          format.json { render json:"ok" }
+        end
+      else
+        redirect_to root_url
+      end
     else
       @feed_items = []
-      render 'static_pages/home'
+      respond_to do |format|
+        format.html { render 'static_pages/home' }
+        format.json { render json:@post.errors, :status => 404 }
+      end
     end
 
   end
