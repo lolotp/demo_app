@@ -18,7 +18,7 @@ class PostsController < ApplicationController
       @feed_items = []
       respond_to do |format|
         format.html { render 'static_pages/home' }
-        format.json { render json:@post.errors, :status => 404 }
+        format.json { render json:@post.errors.full_messages.first, :status => 404 }
       end
     end
 
