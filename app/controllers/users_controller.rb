@@ -101,7 +101,7 @@ class UsersController < ApplicationController
   def amazon_s3_temporary_credentials
     my_access_key_id = 'AKIAJVYGWBMHL24XPXYA'
     my_secret_key = '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'
-    bucket_name = params[:bucket_name]
+    resource = params[:resource]
 
     AWS.config({
       :access_key_id => my_access_key_id,
@@ -110,8 +110,8 @@ class UsersController < ApplicationController
     sts = AWS::STS.new()
     policy = AWS::STS::Policy.new
     policy.allow(
-      :actions => ["s3:ListBucket","s3:PutObject"],
-      :resources => "arn:aws:s3:::#{bucket_name}")
+      :actions => ['s3:PutObject','s3:GetObject','s3:ListObject'],
+      :resources => "arn:aws:s3:::#{resource}")
   
     session = sts.new_federated_session(
       'User1',
