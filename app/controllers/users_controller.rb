@@ -1,8 +1,8 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
   before_filter :check_for_mobile, :only => [:create, :friends, :find_users, :get_relation, :amazon_s3_temporary_credentials]
-  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends]
-  before_filter :correct_user,   only: [:edit, :update]
+  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials]
+  before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials]
   before_filter :admin_user, only: :destroy
   
 
@@ -114,7 +114,7 @@ class UsersController < ApplicationController
       :resources => "arn:aws:s3:::#{resource}")
   
     session = sts.new_federated_session(
-      'User1',
+      current_user.email,
       :policy => policy,
       :duration => 2*60*60)
 
@@ -127,7 +127,7 @@ class UsersController < ApplicationController
 
     def correct_user
       @user = User.find(params[:id])
-      redirect_to(root_path) unless current_user?(@user)
+      redirect_to(root_path) unless (@user and current_user?(@user))
     end
     
     def admin_user
