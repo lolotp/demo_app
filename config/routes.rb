@@ -9,6 +9,7 @@ DemoApp::Application.routes.draw do
       get :friends
       get :find_users
       get :get_relation
+      get :amazon_s3_temporary_credentials
     end
   end
   resources :sessions,   only: [:new, :create, :destroy]

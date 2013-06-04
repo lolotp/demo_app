@@ -1,5 +1,6 @@
+require 'aws-sdk'
 class UsersController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create, :friends, :find_users, :get_relation]
+  before_filter :check_for_mobile, :only => [:create, :friends, :find_users, :get_relation, :amazon_s3_temporary_credentials]
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends]
   before_filter :correct_user,   only: [:edit, :update]
   before_filter :admin_user, only: :destroy
@@ -94,6 +95,31 @@ class UsersController < ApplicationController
       else
         format.json { render json: {:status => @friendship, :id => @friendship } }
       end
+    end
+  end
+
+  def amazon_s3_temporary_credentials
+    my_access_key_id = 'AKIAJVYGWBMHL24XPXYA'
+    my_secret_key = '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'
+    bucket_name = params[:bucket_name]
+
+    AWS.config({
+      :access_key_id => my_access_key_id,
+      :secret_access_key => my_secret_key
+    })
+    sts = AWS::STS.new()
+    policy = AWS::STS::Policy.new
+    policy.allow(
+      :actions => ["s3:ListBucket"],
+      :resources => "arn:aws:s3:::rcusersmedia")
+  
+    session = sts.new_federated_session(
+      'User1',
+      :policy => policy,
+      :duration => 2*60*60)
+
+    respond_to do |format|
+      format.json { render json: session.credentials }
     end
   end
   
