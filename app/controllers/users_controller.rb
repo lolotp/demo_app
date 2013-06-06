@@ -86,7 +86,7 @@ class UsersController < ApplicationController
     end
   end
   
-  def get_relation
+  def relation
     other_user_id = params[:other_user]
     @friendship = current_user.friendships.find_by_friend_id(other_user_id)
     respond_to do |format|
