@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
       redirect_back_or(root_path, lat, long)       
     else      
       respond_to do |format|
-        format.json {render json: "Unable to authenticate user", :status => 404}
+        format.json {render json: "Unable to authenticate user", :status => 401}
         flash.now[:error] = 'Invalid email/password combination'
         format.html {render 'new'}
       end     

@@ -13,8 +13,13 @@ DemoApp::Application.routes.draw do
     end
   end
   resources :sessions,   only: [:new, :create, :destroy]
-  resources :posts, only: [:create, :destroy]
+  resources :posts, only: [:create, :destroy] do
+    member do
+      get :comments
+    end
+  end
   resources :friendships, only: [:create, :destroy, :update]
+  resources :comments, only: [:create]
 
   root to: 'static_pages#home'
 

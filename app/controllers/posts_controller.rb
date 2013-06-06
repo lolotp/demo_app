@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create]
+  before_filter :check_for_mobile, :only => [:create, :comments]
   before_filter :signed_in_user 
   before_filter :correct_user,   only: :destroy
 
@@ -18,7 +18,7 @@ class PostsController < ApplicationController
       @feed_items = []
       respond_to do |format|
         format.html { render 'static_pages/home' }
-        format.json { render json:@post.errors.full_messages.first, :status => 404 }
+        format.json { render json:@post.errors.full_messages.first, :status => 400 }
       end
     end
 
@@ -27,6 +27,14 @@ class PostsController < ApplicationController
   def destroy
     @post.destroy
     redirect_to root_url
+  end
+
+  def comments
+    @post = Post.find_by_id (params[:id])
+    @comments = @post.comments
+    respond_to do |format|
+      format.json { render json: @comments }
+    end
   end
   
   private 
