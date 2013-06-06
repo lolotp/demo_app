@@ -2,6 +2,8 @@ class Post < ActiveRecord::Base
   attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option
   belongs_to :user
 
+  has_many :comments, dendent: :destroy
+
   validates :content, presence: true
   validates :user, presence: true
   validates :privacy_option, presence: true
