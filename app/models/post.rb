@@ -43,7 +43,7 @@ class Post < ActiveRecord::Base
   def as_json(options={})
       json_obj = super
       json_obj[:author_name] = self.user.name
-      json_obj[:author_avatar] = self.user.gravatar_url
+      json_obj[:author_email] = self.user.email
       json_obj
   end
 end
