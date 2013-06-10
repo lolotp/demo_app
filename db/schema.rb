@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130606112017) do
+ActiveRecord::Schema.define(:version => 20130610145222) do
 
   create_table "comments", :force => true do |t|
     t.string   "content"
@@ -22,6 +22,21 @@ ActiveRecord::Schema.define(:version => 20130606112017) do
   end
 
   add_index "comments", ["post_id", "user_id", "created_at"], :name => "index_comments_on_post_id_and_user_id_and_created_at"
+
+  create_table "dungeons", :force => true do |t|
+    t.string   "description"
+    t.string   "file_url"
+    t.integer  "user_id"
+    t.integer  "view_count"
+    t.integer  "like_count"
+    t.integer  "rating"
+    t.float    "longitude"
+    t.float    "latitude"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "dungeons", ["user_id", "created_at"], :name => "index_dungeons_on_user_id_and_created_at"
 
   create_table "friendships", :force => true do |t|
     t.integer  "user_id"
@@ -57,8 +72,10 @@ ActiveRecord::Schema.define(:version => 20130606112017) do
     t.datetime "created_at",                            :null => false
     t.datetime "updated_at",                            :null => false
     t.string   "privacy_option", :default => "friends"
+    t.integer  "dungeon_id"
   end
 
+  add_index "posts", ["dungeon_id"], :name => "index_posts_on_dungeon_id"
   add_index "posts", ["privacy_option"], :name => "index_posts_on_privacy_option"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at"
 
