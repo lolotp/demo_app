@@ -17,6 +17,11 @@ class StaticPagesController < ApplicationController
         format.html {}
         format.json { render json: { :post_list => @feed_items, :user => current_user } }
       end  
+    else
+      respond_to do |format|
+        format.html {}
+        format.json { render json:  "Unauthorized", :status => 401 }      
+      end
     end
   end
 
