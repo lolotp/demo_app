@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130610145222) do
+ActiveRecord::Schema.define(:version => 20130613172101) do
 
   create_table "comments", :force => true do |t|
     t.string   "content"
@@ -50,6 +50,21 @@ ActiveRecord::Schema.define(:version => 20130610145222) do
   add_index "friendships", ["status"], :name => "index_friendships_on_status"
   add_index "friendships", ["user_id", "friend_id"], :name => "index_friendships_on_user_id_and_friend_id", :unique => true
   add_index "friendships", ["user_id"], :name => "index_friendships_on_user_id"
+
+  create_table "landmarks", :force => true do |t|
+    t.string   "description"
+    t.string   "file_url"
+    t.integer  "user_id"
+    t.integer  "view_count"
+    t.integer  "like_count"
+    t.integer  "rating"
+    t.float    "longitude"
+    t.float    "latitude"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "landmarks", ["user_id", "created_at"], :name => "index_landmarks_on_user_id_and_created_at"
 
   create_table "microposts", :force => true do |t|
     t.string   "content"

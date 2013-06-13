@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   has_many :microposts, dependent: :destroy
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
-  has_many :dungeons
+  has_many :landmarks
   has_many :friendships, dependent: :destroy
   has_many :friends, :through => :friendships, :source => :friend, :conditions => "status = 'accepted'"
   has_many :pending_friends, :through => :friendships, :source => :friend, :conditions => "status ='pending'"

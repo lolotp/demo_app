@@ -1,7 +1,7 @@
 class Post < ActiveRecord::Base
   attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option
   belongs_to :user
-  belongs_to :dungeon
+  belongs_to :landmark
 
   has_many :comments, dependent: :destroy
 
