@@ -26,7 +26,7 @@ class Post < ActiveRecord::Base
     where("user_id IN (#{friend_user_ids}) OR user_id = :user_id", 
           user_id: user.id)
   end
-  
+  # { :levels => [ { :dist => 2000, :popularity => 0 }, {:dist => 10000, :popularity => 100 } ] }
   def self.from_friends_by_social_radius(user, cur_lat, cur_long, levels)
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id"   
@@ -35,6 +35,7 @@ class Post < ActiveRecord::Base
       dist = level[:dist]
       popularity = level[:popularity]
       level_filter = "earth_box(ll_to_earth(#{cur_lat},#{cur_long}), #{dist}) @> ll_to_earth(latitude, longitude) AND view_count+like_count > #{popularity}"
+      if (radius_filter != "") radius_filter += " AND "
       radius_filter += level_filter
     end
     where("user_id IN (#{friend_user_ids}) OR user_id = :user_id AND (#{radius_filter})", 
