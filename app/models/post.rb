@@ -16,7 +16,7 @@ class Post < ActiveRecord::Base
                          WHERE user_id = :user_id"
     max_dist = 50000;
     distance_filter = "earth_box(ll_to_earth(#{cur_lat},#{cur_long}), #{max_dist}) @> ll_to_earth(latitude, longitude)"                         
-    where("user_id IN (#{friend_user_ids}) OR user_id = :user_id AND (#{distance_filter})", 
+    where("(user_id IN (#{friend_user_ids}) OR user_id = :user_id) AND (#{distance_filter})", 
           user_id: user.id)
   end
   
