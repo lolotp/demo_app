@@ -127,10 +127,12 @@ class UsersController < ApplicationController
 
     def correct_user
       @user = User.find(params[:id])
-      redirect_to(root_path) unless (@user and current_user?(@user))
+      if (!@user or !current_user?(@user))
+        unauthorized_result
+      end
     end
     
     def admin_user
-      redirect_to(root_path) unless current_user.admin?
+      unauthorized_result unless current_user.admin?
     end
 end

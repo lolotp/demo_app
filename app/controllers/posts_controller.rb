@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
   before_filter :check_for_mobile, :only => [:create, :comments]
   before_filter :signed_in_user 
-  before_filter :correct_user,   only: :destroy
+  before_filter :correct_user,  only: :destroy
 
   def create
     @post = current_user.posts.build(params[:post])
@@ -40,6 +40,6 @@ class PostsController < ApplicationController
   private 
     def correct_user
       @post = current_user.posts.find_by_id(params[:id])
-      redirect_to root_url if @post.nil?
+      unauthorized_result if @post.nil?
     end
 end

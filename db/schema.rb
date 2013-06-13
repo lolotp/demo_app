@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130613172101) do
+ActiveRecord::Schema.define(:version => 20130613180340) do
 
   create_table "comments", :force => true do |t|
     t.string   "content"
@@ -87,10 +87,10 @@ ActiveRecord::Schema.define(:version => 20130613172101) do
     t.datetime "created_at",                            :null => false
     t.datetime "updated_at",                            :null => false
     t.string   "privacy_option", :default => "friends"
-    t.integer  "dungeon_id"
+    t.integer  "landmark_id"
   end
 
-  add_index "posts", ["dungeon_id"], :name => "index_posts_on_dungeon_id"
+  add_index "posts", ["landmark_id"], :name => "index_posts_on_landmark_id"
   add_index "posts", ["privacy_option"], :name => "index_posts_on_privacy_option"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at"
 
