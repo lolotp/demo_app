@@ -35,7 +35,9 @@ class Post < ActiveRecord::Base
       dist = level[:dist]
       popularity = level[:popularity]
       level_filter = "earth_box(ll_to_earth(#{cur_lat},#{cur_long}), #{dist}) @> ll_to_earth(latitude, longitude) AND view_count+like_count > #{popularity}"
-      if (radius_filter != "") radius_filter += " AND "
+      if (radius_filter != "") 
+        radius_filter += " AND "
+      end
       radius_filter += level_filter
     end
     where("user_id IN (#{friend_user_ids}) OR user_id = :user_id AND (#{radius_filter})", 
