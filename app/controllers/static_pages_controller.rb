@@ -8,14 +8,15 @@ class StaticPagesController < ApplicationController
       long = params[:longitude]
       levels = params[:levels]
       if (lat and long and levels)
-        @feed_items = current_user.feed_by_social_radius(lat,long, params[:levels]).paginate(page: params[:page])
+        @post_feed_items = current_user.post_feed_by_social_radius(lat,long, levels).paginate(page: params[:page])
+        @landmark_feed_items = Landmark.feed_by_social_radius(lat,long, levels).paginate(page: params[:landmark_page])
       else
         @feed_items = current_user.feed.paginate(page: params[:page])
       end
         
       respond_to do |format|
         format.html {}
-        format.json { render json: { :post_list => @feed_items, :user => current_user } }
+        format.json { render json: { :post_list => @post_feed_items, :landmark_list => @landmark_feed_items, :user => current_user } }
       end  
     else
       respond_to do |format|

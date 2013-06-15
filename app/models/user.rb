@@ -34,17 +34,16 @@ class User < ActiveRecord::Base
   validates :password, presence: true, length: { minimum: 6 }
   validates :password_confirmation, presence: true
   
-  def feed
+  def post_feed
     Post.from_friends(self)
   end
   
-  def feed_by_location(cur_lat, cur_long)
+  def post_feed_by_location(cur_lat, cur_long)
     Post.from_friends_by_location(self, cur_lat, cur_long)
   end
   
-  def feed_by_social_radius(cur_lat, cur_long, levels)
-    { :post_list => Post.from_friends_by_social_radius(self, cur_lat, cur_long, levels),
-      :landmark_list => Landmark.by_social_radius(self, cur_lat, cur_long, levels) }
+  def post_feed_by_social_radius(cur_lat, cur_long, levels)
+    Post.from_friends_by_social_radius(self, cur_lat, cur_long, levels),  
   end
 
   def friend?(other_user)

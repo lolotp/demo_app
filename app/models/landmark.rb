@@ -4,7 +4,7 @@ class Landmark < ActiveRecord::Base
 
   has_many :posts
 
-  def self.by_social_radius(user, cur_lat, cur_long, levels)
+  def self.feed_by_social_radius(user, cur_lat, cur_long, levels)
     radius_filter = ""
     levels.each do |level|
       dist = level[:dist]
