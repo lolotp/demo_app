@@ -43,7 +43,8 @@ class User < ActiveRecord::Base
   end
   
   def feed_by_social_radius(cur_lat, cur_long, levels)
-    Post.from_friends_by_social_radius(self, cur_lat, cur_long, levels)
+    { :post_list => Post.from_friends_by_social_radius(self, cur_lat, cur_long, levels),
+      :landmark_list => Landmark.from_friends_by_location(self, cur_lat, cur_long, levels) }
   end
 
   def friend?(other_user)

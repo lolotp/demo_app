@@ -126,7 +126,7 @@ class UsersController < ApplicationController
   private
 
     def correct_user
-      @user = User.find(params[:id])
+      @user = User.find_by_id(params[:id])
       if (!@user or !current_user?(@user))
         unauthorized_result
       end
