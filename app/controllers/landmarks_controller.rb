@@ -1,4 +1,5 @@
 class LandmarksController < ApplicationController
+  before_filter :check_for_mobile, only: :index
   before_filter :admin_user, only: :create
 
   def create
@@ -20,6 +21,21 @@ class LandmarksController < ApplicationController
     respond_to do
       format.html { }
       format.json { render json: { :post_list => @posts, :landmark => @landmark } }
+    end
+  end
+
+  def index
+    lat = params[:latitude]
+    long = params[:longitude]
+    levels = params[:levels]
+    if (lat and long and levels)
+      @landmarks = Landmark.feed_by_social_radius(lat,long,levels).paginate(page: params[:page])
+    else
+      @landmarks = Landmark.where("").paginate(page: params[:page])
+    end
+    respond_to do |format|
+      format.html {}
+      format.json { render json: @landmarks }
     end
   end
 
