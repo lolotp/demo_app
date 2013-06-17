@@ -1,5 +1,6 @@
 class LandmarksController < ApplicationController
   before_filter :check_for_mobile, only: :index
+  before_filter :signed_in_user, only: :index
   before_filter :admin_user, only: :create
 
   def create
