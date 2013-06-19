@@ -8,6 +8,7 @@ class PostsController < ApplicationController
     @landmark = Landmark.find_by_id(params[:landmark_id])
     if (@landmark)
       @post.landmark_id = @landmark.id
+    end
     if @post.save
       flash[:success] = "Review posted"
       if mobile_device?
