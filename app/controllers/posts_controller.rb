@@ -5,6 +5,9 @@ class PostsController < ApplicationController
 
   def create
     @post = current_user.posts.build(params[:post])
+    @landmark = Landmark.find_by_id(params[:landmark_id])
+    if (@landmark)
+      @post.landmark_id = @landmark.id
     if @post.save
       flash[:success] = "Review posted"
       if mobile_device?

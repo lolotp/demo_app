@@ -13,7 +13,8 @@ describe Post do
   it { should respond_to(:longitude) }
   it { should respond_to(:view_count) }
   it { should respond_to(:like_count) }
-  
+  it { should respond_to(:landmark_id) }
+
   its(:user) { should == user }
 
   it { should be_valid }
