@@ -19,7 +19,7 @@ describe User do
   it { should respond_to(:authenticate) }
   it { should respond_to(:microposts) }
   it { should respond_to(:posts) }
-  it { should respond_to(:feed) }
+  it { should respond_to(:post_feed) }
   it { should respond_to(:friendships) }
   it { should respond_to(:friends) }
   it { should respond_to(:pending_friends) }
@@ -78,19 +78,20 @@ describe User do
   end
   
   describe "when email address is already taken" do
+    let(:other_user) { FactoryGirl.create(:user) }
     before do
-      user_with_same_email = @user.dup
-      user_with_same_email.save
+      other_user.email = @user.email
+      other_user.save
     end
 
     it { should_not be_valid }
   end
 
   describe "when email address is already taken" do
+   let(:other_user) { FactoryGirl.create(:user) }
     before do
-      user_with_same_email = @user.dup
-      user_with_same_email.email = @user.email.upcase
-      user_with_same_email.save
+      other_user.email = @user.email.upcase
+      other_user.save
     end
 
     it { should_not be_valid }
@@ -191,10 +192,10 @@ describe User do
         3.times { friend.posts.create!(content: "Lorem ipsum") }
       end
       
-      its(:feed) { should include(newer_post) }
-      its(:feed) { should include(older_post) }
-      its(:feed) { should_not include(unfollowed_post) }
-      its(:feed) do
+      its(:post_feed) { should include(newer_post) }
+      its(:post_feed) { should include(older_post) }
+      its(:post_feed) { should_not include(unfollowed_post) }
+      its(:post_feed) do
         friend.posts.each do |p|
           should include(p)
         end
@@ -246,8 +247,23 @@ describe User do
       end
     end
   end
+
+  describe "sending notifications" do
+    let(:other_user) { FactoryGirl.create(:user) }
+    before do
+      @user.save
+      @user.request_friend!(other_user)
+    end
+    
+    describe "notification for other user should exist" do
+      subject { other_user }
+      its(:notifications) { should_not be_empty }
+    end
+
+    describe "notification should have user's name" do
+      subject { other_user.notifications.first }
+      its (:content) { should include(@user.name) }
+    end
+  end
 end
-
-
-
 
