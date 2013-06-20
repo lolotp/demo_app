@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
   has_many :friends, :through => :friendships, :source => :friend, :conditions => "status = 'accepted'"
   has_many :pending_friends, :through => :friendships, :source => :friend, :conditions => "status ='pending'"
   has_many :requested_friends, :through => :friendships, :source => :friend, :conditions => "status = 'requested'"
+  has_many :notifications, :foreign_key => :receiver_id, :dependent => :destroy
 
   before_save { |user| user.email = email.downcase }
   before_save :create_remember_token
