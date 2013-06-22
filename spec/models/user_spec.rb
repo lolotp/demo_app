@@ -28,6 +28,7 @@ describe User do
   it { should respond_to(:request_friend!) }
   it { should respond_to(:accept_friend!) }
   it { should respond_to(:unfriend!) }
+  it { should respond_to(:unviewed_notifications) }
 
 
   it { should be_valid }
