@@ -1,6 +1,7 @@
 class FriendshipsController < ApplicationController
-  before_filter :signed_in_user
   before_filter :check_for_mobile, :only => [:create, :destroy, :update]
+  before_filter :signed_in_user
+  before_filter :correct_user, :only => [:update, :destroy]
   
   def create
     @user = User.find(params[:friendship][:friend_id])
@@ -54,4 +55,10 @@ class FriendshipsController < ApplicationController
       end
     end
   end
+
+  private 
+    def correct_user
+      @friendship = current_user.friendships.find_by_id(params[:id])
+      unauthorized_result if @friendship.nil?
+    end
 end
