@@ -25,6 +25,8 @@ class FriendshipsController < ApplicationController
       current_user.unfriend!(@user)
     elsif (f.status == "pending")
       current_user.cancel_request!(@user)
+    elsif (f.status == "requested")
+      current_user.decline_request!(@user)
     end
     friendship = current_user.friendships.find_by_friend_id(@user)
     respond_to do |format|
