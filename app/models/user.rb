@@ -111,7 +111,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  def decline_request!(other_user) {
+  def decline_request!(other_user)
     my_friendship = friendships.find_by_friend_id(other_user.id)
     other_friendship = other_user.friendships.find_by_friend_id(id)
     if my_friendship.status == 'requested'
@@ -120,7 +120,7 @@ class User < ActiveRecord::Base
         other_friendship.delete
       end
     end
-  }
+  end
   
   def self.find_matched_users(search_string)    
     where("name LIKE '%#{search_string}%' OR email LIKE '%#{search_string}%'")
