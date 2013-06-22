@@ -1,8 +1,8 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create, :friends, :find_users, :get_relation, :amazon_s3_temporary_credentials]
-  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials]
-  before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials]
+  before_filter :check_for_mobile, :only => [:create, :friends, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends]
+  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends]
+  before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
   
 
@@ -60,6 +60,13 @@ class UsersController < ApplicationController
       format.html { render 'show_friends' }
       format.json { render json: @users }
     end   
+  end
+
+  def requested_friends
+    @requested_friends = @user.requested_friends.paginate(page: params[:page])
+    respond_to do |format|
+      format.json { render json: @requested_friends }
+    end
   end
   
   def find_users

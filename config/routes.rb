@@ -7,6 +7,7 @@ DemoApp::Application.routes.draw do
   resources :users do
     member do
       get :friends
+      get :requested_friends
       get :find_users
       get :relation
       get :amazon_s3_temporary_credentials
