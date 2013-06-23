@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create, :comments]
+  before_filter :check_for_mobile, :only => [:create, :comments, :destroy]
   before_filter :signed_in_user 
   before_filter :correct_user,  only: :destroy
 
