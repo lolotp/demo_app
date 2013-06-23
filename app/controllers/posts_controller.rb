@@ -30,7 +30,17 @@ class PostsController < ApplicationController
 
   def destroy
     @post.destroy
-    redirect_to root_url
+    if mobile_device?
+      respond_to do |format|
+        if (@post.destroyed?)
+          format.json { render json: "ok" }
+        else
+          format.json { render json: "error", :status => 400 }
+        end  
+      end
+    else
+      redirect_to root_url
+    end
   end
 
   def comments
