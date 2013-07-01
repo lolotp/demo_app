@@ -1,5 +1,5 @@
 class Post < ActiveRecord::Base
-  attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option
+  attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option, :subject
   belongs_to :user
   belongs_to :landmark
 
