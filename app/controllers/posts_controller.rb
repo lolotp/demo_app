@@ -5,6 +5,7 @@ class PostsController < ApplicationController
 
   def create
     @post = current_user.posts.build(params[:post])
+    @post.subject = params[:subject]
     @landmark = Landmark.find_by_id(params[:landmark_id])
     if (@landmark)
       @post.landmark_id = @landmark.id
