@@ -1,5 +1,5 @@
 class Landmark < ActiveRecord::Base
-  attr_accessible :description, :file_url, :latitude, :longitude, :rating
+  attr_accessible :name, :description, :file_url, :latitude, :longitude, :rating
   belongs_to :user
 
   has_many :posts
