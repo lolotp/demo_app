@@ -36,8 +36,9 @@ module SessionsHelper
   end
 
   def unauthorized_result
-    if (is_mobile?) 
+    if (mobile_device?) 
       respond_to do |format|
+        format.html {render :text => "Unauthorized"}
         format.json { render :text => "Unauthorized", :status => 401 }
       end
     else        
