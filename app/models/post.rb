@@ -1,10 +1,12 @@
 class Post < ActiveRecord::Base
-  attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option, :subject
+  attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option, :subject, :thumbnail_url
   belongs_to :user
   belongs_to :landmark
 
   has_many :comments, dependent: :destroy
 
+  validates :file_url, presence: true
+  validates :thumbnail_url, presence: true
   validates :content, presence: true
   validates :user, presence: true
   validates :privacy_option, presence: true

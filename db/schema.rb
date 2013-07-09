@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130707072920) do
+ActiveRecord::Schema.define(:version => 20130709173517) do
 
   create_table "comments", :force => true do |t|
     t.string   "content"
@@ -104,6 +104,7 @@ ActiveRecord::Schema.define(:version => 20130707072920) do
     t.string   "privacy_option", :default => "friends"
     t.integer  "landmark_id"
     t.string   "subject"
+    t.string   "thumbnail_url"
   end
 
   add_index "posts", ["landmark_id"], :name => "index_posts_on_landmark_id"
