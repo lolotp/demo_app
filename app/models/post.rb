@@ -42,7 +42,7 @@ class Post < ActiveRecord::Base
       end
       radius_filter += level_filter
     end
-    where("(user_id IN (#{friend_user_ids}) OR user_id = :user_id) AND (#{radius_filter})", 
+    where("( (user_id IN (#{friend_user_ids}) AND privacy_option = 'friends') OR (user_id = :user_id) OR (privacy_option = 'public')) AND (#{radius_filter})", 
           user_id: user.id)
   end
 
