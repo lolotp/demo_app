@@ -1,6 +1,6 @@
 class LandmarksController < ApplicationController
   before_filter :check_for_mobile, only: [:index, :show]
-  before_filter :signed_in_user, only: :index
+  before_filter :signed_in_user, only: [:index, :show, :create]
   before_filter :admin_user, only: :create
 
   def create
@@ -20,8 +20,8 @@ class LandmarksController < ApplicationController
     @landmark = Landmark.find_by_id(params[:id])
     @posts = @landmark.posts
     show_all = params[:show_all]
-    respond_to do
-      format.html { }
+    respond_to do |format|
+      format.html { render text:"not implemented" }
       if show_all
         format.json { render json: { :post_list => @posts, :landmark => @landmark } }
       else
