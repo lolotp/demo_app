@@ -19,6 +19,10 @@ class User < ActiveRecord::Base
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :landmarks
+  has_many :follows, dependent: :destroy
+  has_many :followees, :through => :follows, :source => :followee
+  has_many :reverse_follows, foreign_key: "followee_id", class_name: "Follow", dependent: :destroy
+  has_many :followers, through: :reverse_follows, source: :user
   has_many :friendships, dependent: :destroy
   has_many :friends, :through => :friendships, :source => :friend, :conditions => "status = 'accepted'"
   has_many :pending_friends, :through => :friendships, :source => :friend, :conditions => "status ='pending'"
@@ -137,6 +141,21 @@ class User < ActiveRecord::Base
     super(:only => [:name,:email,:id])
   end
 
+  def following?(other_user)
+    follows.find_by_followee_id(other_user.id)
+  end
+
+  def follow!(other_user)
+    follows.create!(followee_id: other_user.id)
+  end
+
+  def unfollow!(other_user)
+    follows.find_by_followee_id(other_user.id).destroy
+  end
+
+  def post_follow_feed
+    Post.from_followees(self)
+  end
 
 private
 

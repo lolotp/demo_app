@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130709173517) do
+ActiveRecord::Schema.define(:version => 20130713173558) do
 
   create_table "comments", :force => true do |t|
     t.string   "content"
@@ -37,6 +37,17 @@ ActiveRecord::Schema.define(:version => 20130709173517) do
   end
 
   add_index "dungeons", ["user_id", "created_at"], :name => "index_dungeons_on_user_id_and_created_at"
+
+  create_table "follows", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "followee_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "follows", ["followee_id"], :name => "index_follows_on_followee_id"
+  add_index "follows", ["user_id", "followee_id"], :name => "index_follows_on_user_id_and_followee_id", :unique => true
+  add_index "follows", ["user_id"], :name => "index_follows_on_user_id"
 
   create_table "friendships", :force => true do |t|
     t.integer  "user_id"

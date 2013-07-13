@@ -18,6 +18,7 @@ FactoryGirl.define do
   factory :post do
     content "sample review"
     file_url "http://www.imageurlhost.com/images/d4s7842xl4qduc8vj1w.jpg"
+    thumbnail_url "http://www.imageurlhost.com/images/d4s7842xl4qduc8vj1w.jpg"
     latitude 120.0
     longitude 120.0
     rating    5

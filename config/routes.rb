@@ -21,7 +21,7 @@ DemoApp::Application.routes.draw do
   end
   resources :friendships, only: [:create, :destroy, :update]
   resources :comments, only: [:create]
-  resources :landmarks, only: [:create, :index]
+  resources :landmarks, only: [:create, :index, :show]
   resources :notifications, only: [:update]
 
   root to: 'static_pages#home'

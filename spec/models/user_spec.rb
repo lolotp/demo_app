@@ -29,10 +29,14 @@ describe User do
   it { should respond_to(:accept_friend!) }
   it { should respond_to(:unfriend!) }
   it { should respond_to(:unviewed_notifications) }
-
+  it { should respond_to(:follows) }
+  it { should respond_to(:followees) }
+  it { should respond_to(:follows) }
+  it { should respond_to(:followers) }
 
   it { should be_valid }
   it { should_not be_admin }
+
   describe "with admin attribute set to 'true'" do
     before do
       @user.save!
@@ -190,7 +194,7 @@ describe User do
       before do
         @user.request_friend!(friend)
         friend.accept_friend!(@user)
-        3.times { friend.posts.create!(content: "Lorem ipsum") }
+        3.times { friend.posts.create!(content: "Lorem ipsum", file_url: "tt", thumbnail_url: "tt") }
       end
       
       its(:post_feed) { should include(newer_post) }
@@ -249,21 +253,44 @@ describe User do
     end
   end
 
-  describe "sending notifications" do
+#  describe "sending notifications" do
+#    let(:other_user) { FactoryGirl.create(:user) }
+#    before do
+#      @user.save
+#      @user.request_friend!(other_user)
+#    end
+    
+#    describe "notification for other user should exist" do
+#      subject { other_user }
+#      its(:notifications) { should_not be_empty }
+#    end
+
+#    describe "notification should have user's name" do
+#      subject { other_user.notifications.first }
+#      its (:content) { should include(@user.name) }
+#    end
+#  end
+
+  describe "following" do
     let(:other_user) { FactoryGirl.create(:user) }
     before do
       @user.save
-      @user.request_friend!(other_user)
-    end
-    
-    describe "notification for other user should exist" do
-      subject { other_user }
-      its(:notifications) { should_not be_empty }
+      @user.follow!(other_user)
     end
 
-    describe "notification should have user's name" do
-      subject { other_user.notifications.first }
-      its (:content) { should include(@user.name) }
+    it { should be_following(other_user) }
+    its(:followees) { should include(other_user) }
+
+    describe "followed user" do
+      subject { other_user }
+      its(:followers) { should include(@user) }
+    end
+
+    describe "and unfollowing" do
+      before { @user.unfollow!(other_user) }
+
+      it { should_not be_following(other_user) }
+      its(:followees) { should_not include(other_user) }
     end
   end
 end

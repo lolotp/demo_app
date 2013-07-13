@@ -19,9 +19,14 @@ class LandmarksController < ApplicationController
   def show
     @landmark = Landmark.find_by_id(params[:id])
     @posts = @landmark.posts
+    show_all = params[:show_all]
     respond_to do
       format.html { }
-      format.json { render json: { :post_list => @posts, :landmark => @landmark } }
+      if show_all
+        format.json { render json: { :post_list => @posts, :landmark => @landmark } }
+      else
+        format.json { render json: { :landmark => @landmark } }
+      end
     end
   end
 
