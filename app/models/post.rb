@@ -24,7 +24,7 @@ class Post < ActiveRecord::Base
   
   def self.from_friends(user)
     friend_user_ids = "SELECT friend_id FROM friendships
-                         WHERE user_id = :user_id"                
+                         WHERE user_id = :user_id AND status='accepted'"                
     where("(user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id)", 
           user_id: user.id)
   end
@@ -38,7 +38,7 @@ class Post < ActiveRecord::Base
   # { :levels => [ { :dist => 2000, :popularity => 0 }, {:dist => 10000, :popularity => 100 } ] }
   def self.from_friends_by_social_radius(user, cur_lat, cur_long, levels)
     friend_user_ids = "SELECT friend_id FROM friendships
-                         WHERE user_id = :user_id"   
+                         WHERE user_id = :user_id AND status='accepted'"   
     radius_filter = ""
     levels.each do |level|
       dist = level[:dist]
@@ -49,7 +49,7 @@ class Post < ActiveRecord::Base
       end
       radius_filter += level_filter
     end
-    where("( (user_id IN (#{friend_user_ids}) AND privacy_option = 'friends') OR (user_id = :user_id) OR (privacy_option = 'public')) AND (#{radius_filter})", 
+    where("( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id) OR (privacy_option = 'public')) AND (#{radius_filter})", 
           user_id: user.id)
   end
 
