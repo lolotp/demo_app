@@ -25,7 +25,7 @@ class Post < ActiveRecord::Base
   def self.from_friends(user)
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id"                
-    where("(user_id IN (#{friend_user_ids}) AND privacy_option = 'friends') OR (user_id = :user_id)", 
+    where("(user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id)", 
           user_id: user.id)
   end
 
