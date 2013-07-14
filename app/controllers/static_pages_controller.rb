@@ -13,7 +13,7 @@ class StaticPagesController < ApplicationController
         @landmark_feed_items = Landmark.feed_by_social_radius(lat,long, levels).paginate(page: params[:landmark_page])
       elsif (!view_follow)
         @post_feed_items = current_user.post_feed.paginate(page: params[:page])
-        @landmark_feed_items = Landmark.feed_by_social_radius(lat,long, []).paginate(page: params[:landmark_page])
+        @landmark_feed_items =[];# Landmark.feed_by_social_radius(lat,long, []).paginate(page: params[:landmark_page])
       else
         @post_feed_items = current_user.post_follow_feed.paginate(page: params[:page])
         @landmark_feed_items = []
