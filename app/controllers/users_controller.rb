@@ -56,7 +56,7 @@ class UsersController < ApplicationController
     else
       if mobile_device?
         respond_to do |format|
-          format.json { render json: @user.errors }
+          format.json { render json: @user.errors, :status => 400 }
         end
       else
         render 'edit'
