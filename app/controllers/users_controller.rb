@@ -110,8 +110,9 @@ class UsersController < ApplicationController
   end
 
   def amazon_s3_temporary_credentials
-    my_access_key_id = 'AKIAJVYGWBMHL24XPXYA'
-    my_secret_key = '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'
+    my_access_key_id = 'AKIAIA6CBZ5N2HEVI64Q'
+    my_secret_key = '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'
+    
     resource = params[:resource]
 
     AWS.config({
