@@ -4,7 +4,7 @@ class LandmarksController < ApplicationController
   #before_filter :admin_user, only: :create
 
   def create
-    @landmark = params[:landmark]
+    @landmark = current_user.landmarks.build(params[:landmark])
     @landmark.save
     respond_to do |format|
       format.html { }
