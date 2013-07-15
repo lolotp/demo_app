@@ -37,7 +37,13 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update_attributes(params[:user])
+    if (params[:user][:password])
+      update_result = @user.update_attributes(params[:user])
+    else
+      update_result = @user.update_nonpassword_attributes(params[:user])
+    end
+    
+    if update_result 
       flash[:success] = "Profile updated"
       sign_in @user
       if mobile_device?

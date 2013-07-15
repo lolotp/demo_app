@@ -157,6 +157,14 @@ class User < ActiveRecord::Base
     Post.from_followees(self)
   end
 
+  def nonpassword_attributes
+    [ :email, :name ]
+  end
+
+  def update_nonpassword_attributes(attributes)
+    self.update_attribute(:email, attributes[:email])
+    self.update_attribute(:name,  attributes[:name] )
+  end
 private
 
     def create_remember_token
