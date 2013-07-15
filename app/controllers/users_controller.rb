@@ -1,6 +1,6 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends]
+  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update]
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends]
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
@@ -40,9 +40,21 @@ class UsersController < ApplicationController
     if @user.update_attributes(params[:user])
       flash[:success] = "Profile updated"
       sign_in @user
-      redirect_to @user
+      if mobile_device?
+        respond_to do |format|
+          format.json { render json: "ok" }
+        end
+      else
+        redirect_to @user
+      end
     else
-      render 'edit'
+      if mobile_device?
+        respond_to do |format|
+          format.json { render json: @user.errors }
+        end
+      else
+        render 'edit'
+      end
     end
   end
   
