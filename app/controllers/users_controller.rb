@@ -90,6 +90,14 @@ class UsersController < ApplicationController
       format.json { render json: @requested_friends }
     end
   end
+
+	def followees
+		@user = User.find(params[:id])
+		@users = @user.followees.paginate(page: params[:page])
+		respond_to do |format|
+			format.json { render json: @users }
+		end
+	end
   
   def find_users
     search_string = params[:search_string]
