@@ -23,6 +23,7 @@ DemoApp::Application.routes.draw do
   resources :comments, only: [:create]
   resources :landmarks, only: [:create, :index, :show]
   resources :notifications, only: [:update]
+	resources :follows, only: [:create, :destroy]
 
   root to: 'static_pages#home'
 
