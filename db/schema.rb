@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130713173558) do
+ActiveRecord::Schema.define(:version => 20130716181418) do
 
   create_table "comments", :force => true do |t|
     t.string   "content"
@@ -102,7 +102,7 @@ ActiveRecord::Schema.define(:version => 20130713173558) do
   add_index "notifications", ["viewed"], :name => "index_notifications_on_viewed"
 
   create_table "posts", :force => true do |t|
-    t.string   "content"
+    t.text     "content"
     t.string   "file_url"
     t.integer  "user_id"
     t.integer  "view_count",     :default => 0
