@@ -10,27 +10,19 @@ class FollowsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @user }
       format.js
-      if (followship)
-        format.json { render json: {:status => "ok", :id => followship.id } }
-      else
-        format.json { render json: {:status => "failed", :id => followship } }
-      end
+      format.json { render json: {:follow => followship } }
     end
 	end
 
 	def destroy
-		f = Follow.find(params[:id])
+		Follow.find(params[:id]).destroy
 		#@user = f.followee
 		#current_	user.unfollow!(@user)
 		#followship = current_user.following?(@user)
 		respond_to do |format|
       #format.html { redirect_to @user }
       format.js
-      if (f.destroy)
-        format.json { render json: {:status => "ok", :id => f.id } }
-      else
-        format.json { render json: {:status => "failed", :id => f } }
-      end
+      format.json { render json: {:follow => nil } }
     end
 	end
 

@@ -139,11 +139,7 @@ class UsersController < ApplicationController
 		other_user_id = params[:other_user]
 		@follow = current_user.follows.find_by_followee_id(other_user_id)
 		respond_to do |format|
-			if (@follow)
-				format.json { render json: { :id => @follow.id } }
-			else
-				format.json { render json: { :id => @follow } }
-			end
+			format.json { render json: { :follow => @follow } }
 		end
 	end
 
