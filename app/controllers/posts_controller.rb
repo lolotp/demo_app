@@ -20,7 +20,7 @@ class PostsController < ApplicationController
         redirect_to root_url
       end
     else
-      @feed_items = []
+      @post_feed_items = []
       respond_to do |format|
         format.html { render 'static_pages/home' }
         format.json { render json:@post.errors.full_messages.first, :status => 400 }
