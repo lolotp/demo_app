@@ -11,6 +11,7 @@ DemoApp::Application.routes.draw do
 		  get :followees
       get :find_users
       get :relation
+			get :relation_follow
       get :amazon_s3_temporary_credentials
     end
   end

@@ -135,6 +135,18 @@ class UsersController < ApplicationController
     end
   end
 
+	def relation_follow
+		other_user_id = params[:other_user]
+		@follow = current_user.follows.find_by_followee_id(other_user_id)
+		respond_to do |format|
+			if (@follow)
+				format.json { render json: { :id => @follow.id } }
+			else
+				format.json { render json: { :id => @follow } }
+			end
+		end
+	end
+
   def amazon_s3_temporary_credentials
     my_access_key_id = 'AKIAIA6CBZ5N2HEVI64Q'
     my_secret_key = '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'
