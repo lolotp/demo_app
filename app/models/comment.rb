@@ -6,4 +6,10 @@ class Comment < ActiveRecord::Base
   validates :content, presence: true
   validates :user, presence: true
   validates :post, presence: true
+
+def as_json(options={})
+      json_obj = super
+      json_obj[:author_name] = self.user.name
+      json_obj
+  end
 end
