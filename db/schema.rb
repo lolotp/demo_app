@@ -11,10 +11,10 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130716181418) do
+ActiveRecord::Schema.define(:version => 20130716203555) do
 
   create_table "comments", :force => true do |t|
-    t.string   "content"
+    t.text     "content"
     t.integer  "user_id"
     t.integer  "post_id"
     t.datetime "created_at", :null => false
@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(:version => 20130716181418) do
   add_index "friendships", ["user_id"], :name => "index_friendships_on_user_id"
 
   create_table "landmarks", :force => true do |t|
-    t.string   "description"
+    t.text     "description"
     t.string   "file_url"
     t.integer  "user_id"
     t.integer  "view_count",  :default => 0
