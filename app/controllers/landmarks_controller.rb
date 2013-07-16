@@ -1,10 +1,10 @@
 class LandmarksController < ApplicationController
-  before_filter :check_for_mobile, only: [:index, :show]
+  before_filter :check_for_mobile, only: [:index, :show, :create]
   before_filter :signed_in_user, only: [:index, :show, :create]
-  before_filter :admin_user, only: :create
+  #before_filter :admin_user, only: :create
 
   def create
-    @landmark = params[:landmark]
+    @landmark = current_user.landmarks.build(params[:landmark])
     @landmark.save
     respond_to do |format|
       format.html { }

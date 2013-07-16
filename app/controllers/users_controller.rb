@@ -1,6 +1,6 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends]
+  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update]
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends]
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
@@ -37,12 +37,30 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update_attributes(params[:user])
+    if (params[:user][:password])
+      update_result = @user.update_attributes(params[:user])
+    else
+      update_result = @user.update_nonpassword_attributes(params[:user])
+    end
+    
+    if update_result 
       flash[:success] = "Profile updated"
       sign_in @user
-      redirect_to @user
+      if mobile_device?
+        respond_to do |format|
+          format.json { render json: "ok" }
+        end
+      else
+        redirect_to @user
+      end
     else
-      render 'edit'
+      if mobile_device?
+        respond_to do |format|
+          format.json { render json: @user.errors, :status => 400 }
+        end
+      else
+        render 'edit'
+      end
     end
   end
   
@@ -118,8 +136,9 @@ class UsersController < ApplicationController
   end
 
   def amazon_s3_temporary_credentials
-    my_access_key_id = 'AKIAJVYGWBMHL24XPXYA'
-    my_secret_key = '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'
+    my_access_key_id = 'AKIAIA6CBZ5N2HEVI64Q'
+    my_secret_key = '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'
+    
     resource = params[:resource]
 
     AWS.config({
