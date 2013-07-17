@@ -13,6 +13,7 @@ DemoApp::Application.routes.draw do
       get :relation
 			get :relation_follow
       get :amazon_s3_temporary_credentials
+      get :details
     end
   end
   resources :sessions,   only: [:new, :create, :destroy]

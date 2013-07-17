@@ -1,7 +1,7 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update]
-  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends]
+  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details]
+  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details]
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
   
@@ -16,6 +16,13 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json { render json: @posts }
+    end
+  end
+  
+  def details
+    @user = User.find_by_id(params[:id])
+    respond_to do |format|
+      format.json { render json: @user }
     end
   end
   
