@@ -6,7 +6,8 @@ class Comment < ActiveRecord::Base
   validates :content, presence: true
   validates :user, presence: true
   validates :post, presence: true
-
+  
+  default_scope order: 'comments.created_at DESC'
   def as_json(options={})
       json_obj = super
       json_obj[:author_name] = self.user.name
