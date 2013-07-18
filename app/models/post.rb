@@ -49,7 +49,7 @@ class Post < ActiveRecord::Base
       end
       radius_filter += level_filter
     end
-    where("(#{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private' AND ( (release IS NULL) OR (release > now())) ) OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release > now())))", 
+    where("(#{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private' AND ( (release IS NULL) OR (release > now())) ) OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release > now()))) )", 
           user_id: user.id)
   end
 
