@@ -46,7 +46,7 @@ class PostsController < ApplicationController
 
   def comments
     @post = Post.find_by_id (params[:id])
-    @comments = @post.comments
+    @comments = @post.comments.paginate(page: params[:page])
     respond_to do |format|
       format.json { render json: @comments }
     end
