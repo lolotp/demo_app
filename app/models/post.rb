@@ -25,14 +25,14 @@ class Post < ActiveRecord::Base
   def self.from_friends(user)
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id AND status='accepted'"                
-    where("(user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id)", 
+    where("(user_id IN (#{friend_user_ids}) AND (privacy_option <> 'private') AND ( (release IS NULL) OR (release > now())) ) OR (user_id = :user_id) ", 
           user_id: user.id)
   end
 
   def self.from_followees(user)
     followee_user_ids = "SELECT followee_id FROM follows
                          WHERE user_id = :user_id"
-    where("(user_id IN (#{followee_user_ids}) AND privacy_option = 'public') OR (user_id = :user_id)", 
+    where("(user_id IN (#{followee_user_ids}) AND privacy_option = 'public' AND ( (release IS NULL) OR (release > now())) ) OR (user_id = :user_id) ", 
           user_id: user.id)
   end
   # { :levels => [ { :dist => 2000, :popularity => 0 }, {:dist => 10000, :popularity => 100 } ] }
@@ -49,7 +49,7 @@ class Post < ActiveRecord::Base
       end
       radius_filter += level_filter
     end
-    where("( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id) OR (privacy_option = 'public')) AND (#{radius_filter})", 
+    where("(#{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private' AND ( (release IS NULL) OR (release > now())) ) OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release > now())))", 
           user_id: user.id)
   end
 
