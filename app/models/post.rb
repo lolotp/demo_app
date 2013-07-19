@@ -1,4 +1,7 @@
+include PostsHelper
+
 class Post < ActiveRecord::Base
+
   attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option, :subject, :thumbnail_url, :release
   belongs_to :user
   belongs_to :landmark
@@ -25,32 +28,36 @@ class Post < ActiveRecord::Base
   def self.from_friends(user)
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id AND status='accepted'"                
-    where("(user_id IN (#{friend_user_ids}) AND (privacy_option <> 'private') AND ( (release IS NULL) OR (release < now())) ) OR (user_id = :user_id) ", 
+    where("(user_id IN (#{friend_user_ids}) AND (privacy_option <> 'private') )", 
           user_id: user.id)
   end
 
   def self.from_followees(user)
     followee_user_ids = "SELECT followee_id FROM follows
                          WHERE user_id = :user_id"
-    where("(user_id IN (#{followee_user_ids}) AND privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) ) OR (user_id = :user_id) ", 
+    where("(user_id IN (#{followee_user_ids}) AND privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) )", 
           user_id: user.id)
   end
   # { :levels => [ { :dist => 2000, :popularity => 0 }, {:dist => 10000, :popularity => 100 } ] }
   def self.from_friends_by_social_radius(user, cur_lat, cur_long, levels)
     friend_user_ids = "SELECT friend_id FROM friendships
-                         WHERE user_id = :user_id AND status='accepted'"   
-    radius_filter = ""
-    levels.each do |level|
-      dist = level[:dist]
-      popularity = level[:popularity]
-      level_filter = "(earth_box(ll_to_earth(#{cur_lat},#{cur_long}), #{dist}) @> ll_to_earth(latitude, longitude) AND view_count+like_count > #{popularity})"
-      if (radius_filter != "") 
-        radius_filter += " OR "
-      end
-      radius_filter += level_filter
-    end
-    where("(#{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private' AND ( (release IS NULL) OR (release < now())) ) OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release < now()))) )", 
+                         WHERE user_id = :user_id AND status='accepted'"
+    radius_filter = gen_radius_filter_query(cur_lat, cur_long, levels)
+    where("(#{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) ) )", 
           user_id: user.id)
+  end
+
+  def self.number_of_unreleased_capsule_by_location(user, cur_lat, cur_long, levels)
+    radius_filter = gen_radius_filter_query(cur_lat, cur_long, levels)
+    friend_user_ids = "SELECT friend_id FROM friendships
+                         WHERE user_id = " + user.id.to_s() + " AND status='accepted'"
+    where(" ( (privacy_option = 'public') AND (release IS NOT NULL AND release > now()) AND (user_id NOT IN (#{friend_user_ids}) ) ) AND #{radius_filter}").count
+  end
+
+  def self.number_of_unreleased_capsule_by_followees(user)
+    followee_user_ids = "SELECT followee_id FROM follows
+                         WHERE user_id = " + user.id.to_s()
+    where(" ( (privacy_option = 'public') AND (release IS NOT NULL AND release > now()) AND (user_id IN (#{followee_user_ids}) ) )").count
   end
 
   def as_json(options={})
