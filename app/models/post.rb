@@ -66,7 +66,7 @@ class Post < ActiveRecord::Base
       json_obj[:subject]  = "Unreleased capsule"
       json_obj[:content]  = "Release time will be " + self.release.to_s()
       json_obj[:file_url] = "TimeCapsule"
-      json_obj[:thumbnail_ur] = "TimeCapsule"
+      json_obj[:thumbnail_url] = "TimeCapsule"
     end
     json_obj[:author_name] = self.user.name
     json_obj[:author_email] = self.user.email
