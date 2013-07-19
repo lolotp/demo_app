@@ -10,7 +10,6 @@ class Post < ActiveRecord::Base
 
   validates :file_url, presence: true
   validates :thumbnail_url, presence: true
-  validates :content, presence: true
   validates :user, presence: true
   validates :privacy_option, presence: true
   
