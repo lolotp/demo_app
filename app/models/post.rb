@@ -35,7 +35,7 @@ class Post < ActiveRecord::Base
   def self.from_followees(user)
     followee_user_ids = "SELECT followee_id FROM follows
                          WHERE user_id = :user_id"
-    where("(user_id IN (#{followee_user_ids}) AND privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) )", 
+    where("(user_id IN (#{followee_user_ids}) AND privacy_option = 'public')", 
           user_id: user.id)
   end
   # { :levels => [ { :dist => 2000, :popularity => 0 }, {:dist => 10000, :popularity => 100 } ] }

@@ -19,7 +19,7 @@ class StaticPagesController < ApplicationController
       else
         @post_feed_items = current_user.post_follow_feed.paginate(page: params[:page])
         @landmark_feed_items = []
-        @unreleased_capsules_count = Post.number_of_unreleased_capsule_by_followees(current_user)
+        @unreleased_capsules_count = 0
       end
         
       respond_to do |format|
