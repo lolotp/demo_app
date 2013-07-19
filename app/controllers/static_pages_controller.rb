@@ -28,7 +28,6 @@ class StaticPagesController < ApplicationController
                                      :landmark_list => @landmark_feed_items, 
                                      :user => current_user, 
                                      :unreleased_capsules_count => @unreleased_capsules_count } }
-]
       end  
     else
       respond_to do |format|

@@ -61,9 +61,15 @@ class Post < ActiveRecord::Base
   end
 
   def as_json(options={})
-      json_obj = super
-      json_obj[:author_name] = self.user.name
-      json_obj[:author_email] = self.user.email
-      json_obj
+    json_obj = super
+    if (self.release and self.release > DateTime.now)
+      json_obj[:subject]  = "Unreleased capsule"
+      json_obj[:content]  = "Release time will be " + self.release.to_s()
+      json_obj[:file_url] = "TimeCapsule"
+      json_obj[:thumbnail_ur] = "TimeCapsule"
+    end
+    json_obj[:author_name] = self.user.name
+    json_obj[:author_email] = self.user.email
+    json_obj
   end
 end
