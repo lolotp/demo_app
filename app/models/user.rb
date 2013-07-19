@@ -56,6 +56,10 @@ class User < ActiveRecord::Base
     f = friendships.find_by_friend_id(other_user.id)
     f and f.status == "accepted"
   end
+
+  def following?(other_user)
+     f = follows.find_by_followee_id(other_user.id)
+  end
   
   def pending_friend?(other_user)
     f = friendships.find_by_friend_id(other_user.id)

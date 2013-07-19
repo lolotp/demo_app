@@ -12,7 +12,13 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find_by_id(params[:id])
-    @posts = @user.posts.paginate(page: params[:page])
+    if (current_user == @user)
+      @posts = @user.posts.paginate(page: params[:page])
+    elsif (current_user.friend?(@user))
+      @posts = @user.posts.where("privacy_option != 'private'").paginate(page: params[:page])
+    elsif (current_user.following?(@user))
+      @posts = @user.posts.where("privacy_option == 'public'").paginate(page: params[:page])
+    end
     respond_to do |format|
       format.html {}
       format.json { render json: @posts }
