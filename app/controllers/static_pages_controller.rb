@@ -11,7 +11,7 @@ class StaticPagesController < ApplicationController
       if (lat and long and levels)
         @post_feed_items = current_user.post_feed_by_social_radius(lat,long, levels).paginate(page: params[:page])
         @landmark_feed_items = Landmark.feed_by_social_radius(lat,long, levels).paginate(page: params[:landmark_page])
-        @unreleased_capsules_count = Post.number_of_unreleased_capsule_by_location(user,lat,long,levels)
+        @unreleased_capsules_count = Post.number_of_unreleased_capsule_by_location(current_user,lat,long,levels)
       elsif (!view_follow)
         @post_feed_items = current_user.post_feed.paginate(page: params[:page])
         @landmark_feed_items =[];
@@ -19,7 +19,7 @@ class StaticPagesController < ApplicationController
       else
         @post_feed_items = current_user.post_follow_feed.paginate(page: params[:page])
         @landmark_feed_items = []
-        @unreleased_capsules_count = Post.number_of_unreleased_capsule_by_followees(user)
+        @unreleased_capsules_count = Post.number_of_unreleased_capsule_by_followees(current_user)
       end
         
       respond_to do |format|
