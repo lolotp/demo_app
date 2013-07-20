@@ -62,7 +62,6 @@ class Post < ActiveRecord::Base
   def as_json(options={})
     json_obj = super
     if (self.release and self.release > DateTime.now)
-      json_obj[:subject]  = "Unreleased capsule"
       json_obj[:content]  = "Release on " + self.release.to_s()
       json_obj[:file_url] = "TimeCapsule"
       json_obj[:thumbnail_url] = "TimeCapsule"
