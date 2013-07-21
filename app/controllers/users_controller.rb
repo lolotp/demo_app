@@ -90,7 +90,7 @@ class UsersController < ApplicationController
   def friends
     @title = "Friends"
     @user = User.find(params[:id])
-    @users = @user.friends.paginate(page: params[:page])
+    @users = @user.friends#.paginate(page: params[:page])
     respond_to do |format|
       format.html { render 'show_friends' }
       format.json { render json: @users }
@@ -98,7 +98,7 @@ class UsersController < ApplicationController
   end
 
   def requested_friends
-    @requested_friends = @user.requested_friends.paginate(page: params[:page])
+    @requested_friends = @user.requested_friends#.paginate(page: params[:page])
     respond_to do |format|
       format.json { render json: @requested_friends }
     end
@@ -106,15 +106,15 @@ class UsersController < ApplicationController
 
 	def followees
 		@user = User.find(params[:id])
-		@users = @user.followees.paginate(page: params[:page])
+		@users = @user.followees#.paginate(page: params[:page])
 		respond_to do |format|
 			format.json { render json: @users }
 		end
 	end
   
   def find_users
-    search_string = params[:search_string]
-    @found_users = User.find_matched_users(search_string).paginate(page: params[:page])
+    search_string = params[:search_string].downcase
+    @found_users = User.find_matched_users(search_string)#.paginate(page: params[:page])
     respond_to do |format|
       format.json {render json: @found_users}
     end
