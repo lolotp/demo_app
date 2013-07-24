@@ -50,7 +50,7 @@ class Post < ActiveRecord::Base
     radius_filter = gen_radius_filter_query(cur_lat, cur_long, levels)
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = " + user.id.to_s() + " AND status='accepted'"
-    where(" ( (privacy_option = 'public') AND (release IS NOT NULL AND release > now()) AND (user_id NOT IN (#{friend_user_ids}) ) ) AND #{radius_filter}").count
+    where(" ( (privacy_option = 'public') AND (release IS NOT NULL AND release > now()) AND (user_id != :user_id) AND (user_id NOT IN (#{friend_user_ids}) ) ) AND #{radius_filter}", user_id: user.id).count
   end
 
   def self.number_of_unreleased_capsule_by_followees(user)
