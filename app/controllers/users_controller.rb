@@ -175,7 +175,7 @@ class UsersController < ApplicationController
     session = sts.new_federated_session(
       current_user.email,
       :policy => policy,
-      :duration => 2*60*60)
+      :duration => 2*60)
 
     respond_to do |format|
       format.json { render json: session.credentials }
