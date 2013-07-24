@@ -169,7 +169,7 @@ class UsersController < ApplicationController
     sts = AWS::STS.new()
     policy = AWS::STS::Policy.new
     policy.allow(
-      :actions => ['s3:PutObject','s3:GetObject','s3:ListObject'],
+      :actions => ['s3:PutObject','s3:GetObject'],
       :resources => "arn:aws:s3:::#{resource}")
   
     session = sts.new_federated_session(
