@@ -142,7 +142,7 @@ class User < ActiveRecord::Base
   end  
 
   def as_json(options={})
-    super(:only => [:name,:email,:id])
+    super(:only => [:name,:email,:id, :updated_at])
   end
 
   def following?(other_user)
