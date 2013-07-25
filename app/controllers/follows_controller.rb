@@ -15,20 +15,20 @@ class FollowsController < ApplicationController
 	end
 
 	def destroy
-		Follow.find(params[:id]).destroy
-		#@user = f.followee
-		#current_	user.unfollow!(@user)
-		#followship = current_user.following?(@user)
+		f = Follow.find(params[:id])
+    @user = f.followee
+    f.destroy
+		follow = Follow.find(params[:id])
 		respond_to do |format|
-      #format.html { redirect_to @user }
+      format.html { redirect_to @user }
       format.js
-      format.json { render json: {:follow => nil } }
+      format.json { render json: {:follow => follow } }
     end
 	end
 
   private 
     def correct_user
-      @followship = current_user.follows.find_by_id(params[:id])
-      unauthorized_result if @followship.nil?
+      @follow = current_user.follows.find_by_id(params[:id])
+      unauthorized_result if @follow.nil?
     end
 end
