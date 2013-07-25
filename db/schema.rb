@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130721161228) do
+ActiveRecord::Schema.define(:version => 20130725141350) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(:version => 20130721161228) do
     t.string   "thumbnail_url"
     t.datetime "release"
     t.string   "topic"
+    t.datetime "posted_at"
   end
 
   add_index "posts", ["created_at"], :name => "index_posts_on_created_at"
@@ -135,9 +136,11 @@ ActiveRecord::Schema.define(:version => 20130721161228) do
     t.string   "remember_token"
     t.boolean  "admin",           :default => false
     t.string   "avatar_url"
+    t.boolean  "public",          :default => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+  add_index "users", ["public"], :name => "index_users_on_public"
   add_index "users", ["remember_token"], :name => "index_users_on_remember_token"
 
 end

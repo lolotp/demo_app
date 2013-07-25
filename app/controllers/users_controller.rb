@@ -1,6 +1,6 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details]
+  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees]
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details]
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
@@ -106,7 +106,10 @@ class UsersController < ApplicationController
 
 	def followees
 		@user = User.find(params[:id])
-		@users = @user.followees#.paginate(page: params[:page])
+    followee_user_ids = "SELECT followee_id FROM follows
+                         WHERE user_id = :user_id"
+    @users = User.where("public = true OR id IN (#{followee_user_ids})",user_id: @user.id)
+		#@users#.paginate(page: params[:page])
 		respond_to do |format|
 			format.json { render json: @users }
 		end
