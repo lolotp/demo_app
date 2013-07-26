@@ -142,7 +142,12 @@ class User < ActiveRecord::Base
   end  
 
   def as_json(options={})
-    super(:only => [:name,:email,:id, :updated_at])
+    json_obj = super(:only => [:name,:email,:id, :updated_at])
+    if (self[:friendship_id])
+      json_obj[:friendship_id] = self[:friendship_id]
+    end
+    json_obj
+    #super(:only => [:name,:email,:id, :updated_at, :friendship_id])
   end
 
   def following?(other_user)

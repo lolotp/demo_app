@@ -98,7 +98,8 @@ class UsersController < ApplicationController
   end
 
   def requested_friends
-    @requested_friends = @user.requested_friends#.paginate(page: params[:page])
+    #@requested_friends = @user.requested_friends#.paginate(page: params[:page])
+		@requested_friends = User.select("users.*, friendships.id as friendship_id").joins("INNER JOIN friendships ON users.id = friendships.friend_id").where("friendships.user_id=:user_id AND friendships.status = 'requested'", :user_id => params[:id])
     respond_to do |format|
       format.json { render json: @requested_friends }
     end
