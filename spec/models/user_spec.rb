@@ -197,8 +197,6 @@ describe User do
         3.times { friend.posts.create!(content: "Lorem ipsum", file_url: "tt", thumbnail_url: "tt") }
       end
       
-      its(:post_feed) { should include(newer_post) }
-      its(:post_feed) { should include(older_post) }
       its(:post_feed) { should_not include(unfollowed_post) }
       its(:post_feed) do
         friend.posts.each do |p|
@@ -253,23 +251,29 @@ describe User do
     end
   end
 
-#  describe "sending notifications" do
-#    let(:other_user) { FactoryGirl.create(:user) }
-#    before do
-#      @user.save
-#      @user.request_friend!(other_user)
-#    end
+  describe "sending notifications" do
+    let(:other_user) { FactoryGirl.create(:user) }
+    before do
+      @user.save
+      post = FactoryGirl.create(:post, user: @user, content: "Dolor sit amet") 
+      comment = FactoryGirl.create(:comment, user: other_user, post: post)
+    end
     
-#    describe "notification for other user should exist" do
-#      subject { other_user }
-#      its(:notifications) { should_not be_empty }
-#    end
+    describe "notification for other user should exist" do
+      subject { @user }
+      its(:notifications) { should_not be_empty }
+    end
 
-#    describe "notification should have user's name" do
-#      subject { other_user.notifications.first }
-#      its (:content) { should include(@user.name) }
-#    end
-#  end
+    describe "notification should have commenter's name" do
+      subject { @user.notifications.first }
+      its (:content) { should include(other_user.name) }
+    end
+
+    describe "notification should have post id" do
+      subject { @user.notifications.first }
+      its (:content) { should include(@user.posts.first.id.to_s) }
+    end
+  end
 
   describe "following" do
     let(:other_user) { FactoryGirl.create(:user) }

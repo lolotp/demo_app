@@ -24,6 +24,12 @@ FactoryGirl.define do
     rating    5
     user
   end
+
+  factory :comment do
+    content "comment"
+    post
+    user
+  end
 end
 
 
