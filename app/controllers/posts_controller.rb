@@ -6,6 +6,9 @@ class PostsController < ApplicationController
   def create
     @post = current_user.posts.build(params[:post])
     if @post.save
+      if (@post.privacy_option == "public")
+        Delayed::Job.enqueue(PublishPublicPostLocationJob.new(@post))
+      end
       flash[:success] = "Review posted"
       if mobile_device?
         respond_to do |format|
