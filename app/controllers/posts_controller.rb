@@ -5,9 +5,6 @@ class PostsController < ApplicationController
 
   def create
     @post = current_user.posts.build(params[:post])
-    if (!@post.subject)
-      @post.subject = params[:subject]
-    end
     if @post.save
       flash[:success] = "Review posted"
       if mobile_device?
