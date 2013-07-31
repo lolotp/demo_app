@@ -197,8 +197,6 @@ describe User do
         3.times { friend.posts.create!(content: "Lorem ipsum", file_url: "tt", thumbnail_url: "tt") }
       end
       
-      its(:post_feed) { should include(newer_post) }
-      its(:post_feed) { should include(older_post) }
       its(:post_feed) { should_not include(unfollowed_post) }
       its(:post_feed) do
         friend.posts.each do |p|

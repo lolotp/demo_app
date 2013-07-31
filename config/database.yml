@@ -9,7 +9,7 @@ development:
   encoding: utf8
   username: lolo
   password: lolo
-  database: demo_app-dev
+  database: multidb-dev
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -20,7 +20,7 @@ test:
   username: lolo
   password: lolo
   encoding: utf8
-  database: demo_app-test
+  database: multidb-test
 
 production:
   adapter: sqlite3
