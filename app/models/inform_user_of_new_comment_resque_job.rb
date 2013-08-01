@@ -33,12 +33,13 @@ class InformUserOfNewCommentResqueJob
         notification = user.notifications.build( :content => "<n><a href=\"memcap://users/#{commenter.id}\" >#{commenter.name}</a> commented on a <a href=\"memcap://posts/#{post.id}\">post</a> you commented on. <a href=\"memcap://comments/#{comment.id}\"/></n>", :viewed => false)
         
         if (notification.save)
-          at_time = comment.created_at
+          at_time = user.created_at
         else
           Resque.enqueue(self, comment_id, at_time, should_inform_owner)
         end #if not.save
       end #users.each do
     end while users.any? #begin
+    puts "job ended sucessfully"
   rescue Resque::TermException
     Resque.enqueue(self, comment_id, at_time, should_inform_owner)
   end #def/rescue
