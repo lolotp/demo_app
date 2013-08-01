@@ -176,7 +176,7 @@ class User < ActiveRecord::Base
   end
   
   def self.commented_on(post, before_time)
-    select("DISTINCT ON (users.id) users.*, comments.created_at as at_time").joins("INNER JOIN comments ON users.id = comments.user_id").where("comments.post_id = :post_id", :post_id => post.id).order("users.id, at_time DESC")
+    select("DISTINCT ON (users.id) users.*, comments.created_at as at_time").joins("INNER JOIN comments ON users.id = comments.user_id").where("comments.post_id = :post_id AND comments.created_at < :before_time", :post_id => post.id, :before_time => before_time).order("users.id, at_time DESC")
   end
 private
 
