@@ -38,7 +38,7 @@ class InformUserOfNewCommentResqueJob
           Resque.enqueue(self, comment_id, at_time, should_inform_owner)
         end #if not.save
       end #users.each do
-    end while comments.any? #begin
+    end while users.any? #begin
   rescue Resque::TermException
     Resque.enqueue(self, comment_id, at_time, should_inform_owner)
   end #def/rescue
