@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create, :comments, :destroy]
-  before_filter :signed_in_user 
+  before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index]
+  before_filter :signed_in_user
   before_filter :correct_user,  only: :destroy
 
   def create
@@ -29,6 +29,18 @@ class PostsController < ApplicationController
       end
     end
 
+  end
+
+  def index
+    ids = params[:ids]
+    if (ids)
+      @posts = Post.allowed_to_view_posts(current_user).where(:id => ids)
+    else
+      @posts = Post.where("").paginate(:page => params[:page])
+    end
+    respond_to do |format|
+      format.json { render json:@posts }
+    end
   end
 
   def destroy

@@ -59,6 +59,12 @@ class Post < ActiveRecord::Base
     where(" ( (privacy_option = 'public') AND (release IS NOT NULL AND release > now()) AND (user_id IN (#{followee_user_ids}) ) )").count
   end
 
+  def self.allowed_to_view_posts(user)
+    friend_user_ids = "SELECT friend_id FROM friendships
+                         WHERE user_id = :user_id AND status='accepted'"
+    where("(user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id) OR (privacy_option = 'public')", :user_id => user.id)
+  end
+
   def as_json(options={})
     json_obj = super
     if (self.release and self.release > DateTime.now)
