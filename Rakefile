@@ -11,5 +11,6 @@ require 'resque/tasks'
 DemoApp::Application.load_tasks
 
 task "resque:setup" do
-      ENV['QUEUE'] = '*'
+  ENV['QUEUE'] = '*'
+  Resque.after_fork = Proc.new { ActiveRecord::Base.establish_connection }
 end
