@@ -1,5 +1,7 @@
 class Notification < ActiveRecord::Base
   attr_accessible :content, :viewed
+
+  default_scope order: 'notifications.created_at DESC'
   
   belongs_to :receiver, :class_name => 'User'
 

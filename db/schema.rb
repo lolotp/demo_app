@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130731191249) do
+ActiveRecord::Schema.define(:version => 20130801214106) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -22,6 +22,8 @@ ActiveRecord::Schema.define(:version => 20130731191249) do
   end
 
   add_index "comments", ["post_id", "user_id", "created_at"], :name => "index_comments_on_post_id_and_user_id_and_created_at"
+  add_index "comments", ["post_id"], :name => "index_comments_on_post_id"
+  add_index "comments", ["user_id"], :name => "index_comments_on_user_id"
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -111,10 +113,9 @@ ActiveRecord::Schema.define(:version => 20130731191249) do
     t.integer  "receiver_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
-    t.string   "type"
   end
 
-  add_index "notifications", ["type"], :name => "index_notifications_on_type"
+  add_index "notifications", ["created_at"], :name => "index_notifications_on_created_at"
   add_index "notifications", ["viewed"], :name => "index_notifications_on_viewed"
 
   create_table "posts", :force => true do |t|
