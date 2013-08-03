@@ -13,4 +13,8 @@ class Comment < ActiveRecord::Base
       json_obj[:author_name] = self.user.name
       json_obj
   end
+
+  def self.on_post_by_unqiue_users(post, before_time)
+    unscoped.select("DISTINCT ON (user_id) user_id, created_at").where("post_id = :post_id AND created_at < :before_time", :post_id => post.id, :before_time => before_time).order("user_id, created_at DESC")
+  end
 end
