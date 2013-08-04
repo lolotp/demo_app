@@ -22,13 +22,14 @@ FactoryGirl.define do
     latitude 120.0
     longitude 120.0
     rating    5
+    privacy_option "public"
     user
   end
 
   factory :comment do
     content "comment"
-    post
     user
+    post    
   end
 end
 

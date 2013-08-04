@@ -8,6 +8,17 @@ require 'rspec/autorun'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+def start_redis
+  `redis-server #{@dir}/redis-test.conf`
+  Resque.redis = "localhost:9736"
+end
+
+def stop_redis
+  `rm -f #{@dir}/dump.rdb`
+  pid = `ps -A -o pid,command | grep [r]edis-test`.split(" ")[0]
+  Process.kill("KILL", pid.to_i)
+end
+
 RSpec.configure do |config|
   # ## Mock Framework
   #
@@ -16,7 +27,9 @@ RSpec.configure do |config|
   # config.mock_with :mocha
   # config.mock_with :flexmock
   # config.mock_with :rr
-
+  config.before do
+    ActiveRecord::Base.observers.disable :all
+  end
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
