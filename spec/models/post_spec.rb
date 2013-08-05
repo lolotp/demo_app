@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Post do
   let(:user) { FactoryGirl.create(:user) }
-  before { @post = user.posts.build(content: "sample review", file_url: "http://", latitude: 120.0, longitude: 120.0, rating: 5) }
+  before { @post = user.posts.build(content: "sample review", file_url: "http://", thumbnail_url: "asdf", latitude: 120.0, longitude: 120.0, rating: 5) }
 
   subject { @post }
 
@@ -14,6 +14,7 @@ describe Post do
   it { should respond_to(:view_count) }
   it { should respond_to(:like_count) }
   it { should respond_to(:landmark_id) }
+  it { should respond_to(:privacy_option) }
 
   its(:user) { should == user }
 
@@ -38,7 +39,7 @@ describe Post do
   end
 
   describe "with blank content" do
-    before { @post.content = " " }
+    before { @post.privacy_option = nil }
     it { should_not be_valid }
   end
 

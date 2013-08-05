@@ -4,10 +4,12 @@ class PostsController < ApplicationController
   before_filter :correct_user,  only: :destroy
 
   def create
+    puts "in create method of posts_controller"
     @post = current_user.posts.build(params[:post])
     if @post.save
       if (@post.privacy_option == "public")
-        Delayed::Job.enqueue(PublishPublicPostLocationJob.new(@post))
+        puts "enqueing task to resque"
+        Resque.enqueue(PublishPublicPostLocationJob,@post.id)
       end
       flash[:success] = "Review posted"
       if mobile_device?

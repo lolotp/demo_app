@@ -1,6 +1,31 @@
-class PublishPublicPostLocationJob < Struct.new(:post)
-  def perform
-    public_post_location = PublicPostLocation.create(:latitude => post.latitude, :longitude => post.longitude, :post_id => post.id)
-    public_post_location.save
-  end
+require 'resque-retry'
+
+class PublishPublicPostLocationJob
+  extend Resque::Plugins::ExponentialBackoff
+  @queue = :publish_location_jobs
+  @retry_limit = 10
+
+  def self.perform(post_id)
+    puts "beginning publishing post to geo table"
+    post = Post.find_by_id(post_id)
+    if (post.privacy_option != 'public' or (not post) ) 
+      return
+    end
+    
+    puts "creating location data"
+    public_post_location = PublicPostLocation.new(:latitude => post.latitude, :longitude => post.longitude)
+    public_post_location.post_id = post_id
+    if not public_post_location.save
+      #if entry already exists in the table
+      if (PublicPostLocation.find_by_id(post.id))
+        puts "post id exists exiting"
+        return #consider job successful
+      else
+        #retry job by raising the error
+        raise public_post_location.errors
+      end #end
+    end #unless
+    puts "end job"
+  end #def 
+
 end
