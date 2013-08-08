@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130804200627) do
+ActiveRecord::Schema.define(:version => 20130808171250) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -153,6 +153,18 @@ ActiveRecord::Schema.define(:version => 20130804200627) do
   end
 
   add_index "public_post_locations", ["post_id"], :name => "index_public_post_locations_on_post_id", :unique => true
+
+  create_table "user_location_feeds", :force => true do |t|
+    t.integer  "post_id"
+    t.integer  "user_id"
+    t.float    "longitude"
+    t.float    "latitude"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "user_location_feeds", ["post_id"], :name => "index_user_location_feeds_on_post_id", :unique => true
+  add_index "user_location_feeds", ["user_id"], :name => "index_user_location_feeds_on_user_id"
 
   create_table "users", :force => true do |t|
     t.string   "name"
