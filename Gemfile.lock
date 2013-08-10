@@ -131,6 +131,8 @@ GEM
       redis (>= 2.0.1)
       resque (>= 1.20.0)
       rufus-scheduler
+    resque-status (0.4.1)
+      resque (~> 1.19)
     rspec (2.11.0)
       rspec-core (~> 2.11.0)
       rspec-expectations (~> 2.11.0)
@@ -202,6 +204,8 @@ DEPENDENCIES
   rails (= 3.2.12)
   resque (~> 1.22.0)
   resque-retry
+  resque-scheduler
+  resque-status
   rspec-rails (= 2.11.0)
   sass-rails (= 3.2.5)
   uglifier (= 1.2.3)

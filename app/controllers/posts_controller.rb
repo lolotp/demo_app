@@ -7,10 +7,6 @@ class PostsController < ApplicationController
     puts "in create method of posts_controller"
     @post = current_user.posts.build(params[:post])
     if @post.save
-      if (@post.privacy_option == "public")
-        puts "enqueing task to resque"
-        Resque.enqueue(PublishPublicPostLocationJob,@post.id)
-      end
       flash[:success] = "Review posted"
       if mobile_device?
         respond_to do |format|

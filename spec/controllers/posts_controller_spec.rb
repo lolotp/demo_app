@@ -4,6 +4,7 @@ describe PostsController do
   let (:user) { FactoryGirl.create(:user) }
   before do
     sign_in(user)
+    Post.observers.enable :post_observer
   end
   describe "POST #create" do
     before do
