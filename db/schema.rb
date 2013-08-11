@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130808171250) do
+ActiveRecord::Schema.define(:version => 20130810185830) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -163,7 +163,7 @@ ActiveRecord::Schema.define(:version => 20130808171250) do
     t.datetime "updated_at", :null => false
   end
 
-  add_index "user_location_feeds", ["post_id"], :name => "index_user_location_feeds_on_post_id", :unique => true
+  add_index "user_location_feeds", ["user_id", "post_id"], :name => "index_user_location_feeds_on_user_id_and_post_id", :unique => true
   add_index "user_location_feeds", ["user_id"], :name => "index_user_location_feeds_on_user_id"
 
   create_table "users", :force => true do |t|
