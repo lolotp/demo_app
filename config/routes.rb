@@ -17,7 +17,7 @@ DemoApp::Application.routes.draw do
     end
   end
   resources :sessions,   only: [:new, :create, :destroy]
-  resources :posts, only: [:create, :destroy, :index] do
+  resources :posts, only: [:create, :destroy, :index, :update] do
     member do
       get :comments
     end

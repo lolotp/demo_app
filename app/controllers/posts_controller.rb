@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index]
+  before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index, :update]
   before_filter :signed_in_user
   before_filter :correct_user,  only: :destroy
 
@@ -23,6 +23,23 @@ class PostsController < ApplicationController
       end
     end
 
+  end
+
+  def update
+    post = Post.find(params[:id])
+    privacy_option = params[:post][:privacy_option]
+    thumbs_up = params[:thumbs_up]
+    update_result = post.update_attribute(:privacy_option, privacy_option)
+    if thumbs_up
+      update_result = update_result and post.increment!(like_count)
+    end
+    respond_to do |format|
+      if update_result
+        format.json { render json: "ok" }
+      else
+        format.json { render json: post.errors.full_messages, :status => 400 }
+      end
+    end
   end
 
   def index
