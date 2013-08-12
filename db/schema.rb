@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130801214106) do
+ActiveRecord::Schema.define(:version => 20130812204550) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -116,7 +116,20 @@ ActiveRecord::Schema.define(:version => 20130801214106) do
   end
 
   add_index "notifications", ["created_at"], :name => "index_notifications_on_created_at"
+  add_index "notifications", ["receiver_id"], :name => "index_notifications_on_receiver_id"
   add_index "notifications", ["viewed"], :name => "index_notifications_on_viewed"
+
+  create_table "post_reports", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "post_id"
+    t.string   "category"
+    t.string   "reason"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "post_reports", ["post_id"], :name => "index_post_reports_on_post_id"
+  add_index "post_reports", ["user_id"], :name => "index_post_reports_on_user_id"
 
   create_table "posts", :force => true do |t|
     t.text     "content"

@@ -56,17 +56,20 @@ class PostsController < ApplicationController
 
   def update
     post = Post.find(params[:id])
-    privacy_option = params[:post][:privacy_option]
     thumbs_up = params[:thumbs_up]
-    update_result = post.update_attribute(:privacy_option, privacy_option)
+    update_result = true
+    if current_user.id == post.user_id
+      privacy_option = params[:post][:privacy_option]
+      update_result = post.update_attribute(:privacy_option, privacy_option)
+    end
     if thumbs_up
-      update_result = update_result and post.increment!(like_count)
+      update_result = update_result and post.increment!(:like_count)
     end
     respond_to do |format|
       if update_result
         format.json { render json: "ok" }
       else
-        format.json { render json: post.errors.full_messages, :status => 400 }
+        format.json { render json: post.errors.full_messages.first, :status => 400 }
       end
     end
   end
