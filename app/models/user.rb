@@ -140,7 +140,7 @@ class User < ActiveRecord::Base
     size = options[:size]
     return_url = "https://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}"
     return_url
-  end  
+  end
 
   def as_json(options={})
     json_obj = super(:only => [:name,:email,:id, :updated_at])

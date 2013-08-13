@@ -14,4 +14,14 @@ class PostReportsController < ApplicationController
     end
   end
 
+  def index
+    from_time = params[:from_time]
+    if not from_time
+      from_time = 10.days.ago
+    end
+
+    @reported_post_ids = PostReport.recently_reported_posts_ids(from_time)
+    @posts = Post.where(:id => @reported_post_ids).paginate(:page => params[:page])
+  end
+
 end

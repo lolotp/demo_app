@@ -1,0 +1,8 @@
+<div class="span8">
+  <h3>Posts reported recently</h3>
+  <ol class="posts">
+    <%= render partial: 'shared/reported_post', collection: @posts %>
+  </ol>
+
+  <%= will_paginate @posts %>
+</div>

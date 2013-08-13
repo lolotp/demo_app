@@ -22,7 +22,7 @@ DemoApp::Application.routes.draw do
       get :comments
     end
   end
-  resources :post_reports, only: [:create]
+  resources :post_reports, only: [:create, :index]
   resources :friendships, only: [:create, :destroy, :update]
   resources :comments, only: [:create]
   resources :landmarks, only: [:create, :index, :show]

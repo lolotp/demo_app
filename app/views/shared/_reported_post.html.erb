@@ -1,0 +1,12 @@
+<li id="<%= reported_post.id %>">
+  <%= link_to avatar_for(reported_post.user), reported_post.user %>
+  <span class="user">
+    <%= link_to reported_post.user.name, reported_post.user %>
+  </span>
+  <span class="content"><%= reported_post.content %></span>
+  <span class="timestamp">
+    Posted <%= time_ago_in_words(reported_post.created_at) %> ago.
+  </span>
+</li>
+
+
