@@ -1,7 +1,7 @@
 class PostReportsController < ApplicationController
   before_filter :check_for_mobile, :only => [:create]
   before_filter :signed_in_user
-
+  before_filter :admin_user, :only => [:index]
   def create
     post_report = current_user.post_reports.build(params[:post_report])
     post_report.post_id = params[:post_id]
@@ -23,5 +23,10 @@ class PostReportsController < ApplicationController
     @reported_post_ids = PostReport.recently_reported_posts_ids(from_time)
     @posts = Post.where(:id => @reported_post_ids).paginate(:page => params[:page])
   end
+
+  private 
+    def admin_user
+      unauthorized_result unless current_user.admin?
+    end
 
 end
