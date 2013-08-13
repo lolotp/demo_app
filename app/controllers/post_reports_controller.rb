@@ -20,8 +20,9 @@ class PostReportsController < ApplicationController
       from_time = 10.days.ago
     end
 
-    @reported_post_ids = PostReport.recently_reported_posts_ids(from_time)
-    @posts = Post.select("posts.*, post_bans.id as ban_id").joins("FULL OUTER JOIN post_bans ON post_bans.post_id = posts.id").where(:id => @reported_post_ids).paginate(:page => params[:page])
+    @reported_post_ids = PostReport.recently_reported_posts_ids(from_time).paginate(:page => params[:page])
+    @posts = Post.unscoped.select(" posts.*, post_bans.id as ban_id").joins("INNER JOIN (SELECT DISTINCT ON (post_id) post_id, created_at FROM post_reports WHERE created_at > '" + from_time.to_s + "') as post_reports ON post_reports.post_id = posts.id").joins("FULL OUTER JOIN post_bans ON posts.id = post_bans.post_id").order("post_reports.created_at DESC").paginate(:page => params[:page])
+    #@posts = Post.select("posts.*, post_bans.id as ban_id").joins(@reported_post_ids)#.joins("FULL OUTER JOIN post_bans ON post_bans.post_id = posts.id")#.where(:id => @reported_post_ids).paginate(:page => params[:page])
     
   end
 end
