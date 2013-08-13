@@ -16,6 +16,6 @@ module UsersHelper
     object = s3.buckets[ ENV['IMAGE_AVATAR_BUCKET'] ].objects[user.email]
 
     url = object.url_for(:read,:expires => 20.minutes.from_now, :secure => true )
-    image_tag(url, alt: user.name, class: "gravatar", size: 50)
+    image_tag(url, alt: user.name, class: "gravatar", size: "50x50")
   end
 end
