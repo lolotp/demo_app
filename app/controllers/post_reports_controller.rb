@@ -23,10 +23,4 @@ class PostReportsController < ApplicationController
     @reported_post_ids = PostReport.recently_reported_posts_ids(from_time)
     @posts = Post.where(:id => @reported_post_ids).paginate(:page => params[:page])
   end
-
-  private 
-    def admin_user
-      unauthorized_result unless current_user.admin?
-    end
-
 end

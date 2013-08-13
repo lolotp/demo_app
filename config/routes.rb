@@ -20,6 +20,7 @@ DemoApp::Application.routes.draw do
   resources :posts, only: [:create, :destroy, :index, :update] do
     member do
       get :comments
+      get :reports
     end
   end
   resources :post_reports, only: [:create, :index]

@@ -1,6 +1,7 @@
 class PostsController < ApplicationController
   before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index, :update]
   before_filter :signed_in_user
+  before_filter :admin_user, :only => [:reports]
   before_filter :correct_user,  only: :destroy
 
   def create
@@ -82,8 +83,18 @@ class PostsController < ApplicationController
     end
   end
   
+  def reports
+    post = Post.find(params[:id])
+    @num_inappropriate = PostReport.where("post_id = :post_id AND category='Inappropirate'", :post_id => post.id).count
+    @num_copyright = PostReport.where("post_id = :post_id AND category='Copyright content'", :post_id => post.id).count
+    @reports = PostReport.where("post_id = :post_id", :post_id => post.id).paginate(:page => params[:page])
+  end
+  
   private 
     def correct_user
+      if current_user.admin?
+        return
+      end
       @post = current_user.posts.find_by_id(params[:id])
       unauthorized_result if @post.nil?
     end
