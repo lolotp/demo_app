@@ -67,7 +67,7 @@ class Post < ActiveRecord::Base
 
   def as_json(options={})
     json_obj = super
-    if (self.ban_count > 0)
+    if (self.ban_count > 1)
       json_obj[:subject] = "Subject hidden because post flagged as inappropriate"
       json_obj[:content]  = "Content hidden because post flagged as inappropriate"
       json_obj[:file_url] = "FlaggedPost"
