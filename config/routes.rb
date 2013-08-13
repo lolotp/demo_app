@@ -21,6 +21,7 @@ DemoApp::Application.routes.draw do
     member do
       get :comments
       get :reports
+      get :media_url
     end
   end
   resources :post_reports, only: [:create, :index]

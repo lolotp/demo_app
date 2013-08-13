@@ -1,7 +1,8 @@
 class PostsController < ApplicationController
+  include PostsHelper
   before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index, :update]
   before_filter :signed_in_user
-  before_filter :admin_user, :only => [:reports]
+  before_filter :admin_user, :only => [:reports, :media_url]
   before_filter :correct_user,  only: :destroy
 
   def create
@@ -82,10 +83,15 @@ class PostsController < ApplicationController
       format.json { render json: @comments }
     end
   end
+
+  def media_url
+    post = Post.find(params[:id])
+    redirect_to PostsHelper::media_url(post).to_s
+  end
   
   def reports
     post = Post.find(params[:id])
-    @num_inappropriate = PostReport.where("post_id = :post_id AND category='Inappropirate'", :post_id => post.id).count
+    @num_inappropriate = PostReport.where("post_id = :post_id AND category='Inappropriate'", :post_id => post.id).count
     @num_copyright = PostReport.where("post_id = :post_id AND category='Copyright content'", :post_id => post.id).count
     @reports = PostReport.where("post_id = :post_id", :post_id => post.id).paginate(:page => params[:page])
   end
