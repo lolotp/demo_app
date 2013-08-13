@@ -2,7 +2,7 @@ include PostsHelper
 
 class Post < ActiveRecord::Base
 
-  attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option, :subject, :thumbnail_url, :release, :topic, :posted_at, :like_count, :view_count
+  attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option, :subject, :thumbnail_url, :release, :topic, :posted_at, :like_count, :ban_count
   belongs_to :user
   belongs_to :landmark
 
