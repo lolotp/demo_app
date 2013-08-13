@@ -161,8 +161,8 @@ class UsersController < ApplicationController
 	end
 
   def amazon_s3_temporary_credentials
-    my_access_key_id = ENV['S3_KEY']#'AKIAIA6CBZ5N2HEVI64Q'
-    my_secret_key = ENV['S3_SECRET']#'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'
+    my_access_key_id = ENV['S3_KEY']
+    my_secret_key = ENV['S3_SECRET']
     
     resource = params[:resource]
 
