@@ -57,13 +57,18 @@ class PostsController < ApplicationController
   end
 
   def update
+    puts "updating post"
     post = Post.find(params[:id])
     thumbs_up = params[:thumbs_up]
     update_result = true
-    if current_user.id == post.user_id
-      privacy_option = params[:post][:privacy_option]
-      update_result = post.update_attribute(:privacy_option, privacy_option)
+    #if there is update to the post params    
+    if params[:post]
+      if current_user.id == post.user_id
+        privacy_option = params[:post][:privacy_option]
+        update_result = post.update_attribute(:privacy_option, privacy_option)
+      end
     end
+
     if thumbs_up
       update_result = update_result and post.increment!(:like_count)
     end

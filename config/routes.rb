@@ -24,6 +24,7 @@ DemoApp::Application.routes.draw do
       get :media_url
     end
   end
+  resources :post_bans, only: [:create, :destroy]
   resources :post_reports, only: [:create, :index]
   resources :friendships, only: [:create, :destroy, :update]
   resources :comments, only: [:create]

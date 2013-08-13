@@ -67,10 +67,17 @@ class Post < ActiveRecord::Base
 
   def as_json(options={})
     json_obj = super
-    if (self.release and self.release > DateTime.now)
-      json_obj[:content]  = "Release on " + self.release.to_s()
-      json_obj[:file_url] = "TimeCapsule"
-      json_obj[:thumbnail_url] = "TimeCapsule"
+    if (self.ban_count > 0)
+      json_obj[:subject] = "Subject hidden because post flagged as inappropriate"
+      json_obj[:content]  = "Content hidden because post flagged as inappropriate"
+      json_obj[:file_url] = "FlaggedPost"
+      json_obj[:thumbnail_url] = "FlaggedPost"
+    else
+      if (self.release and self.release > DateTime.now)
+        json_obj[:content]  = "Release on " + self.release.to_s()
+        json_obj[:file_url] = "TimeCapsule"
+        json_obj[:thumbnail_url] = "TimeCapsule"
+      end
     end
     json_obj[:author_name] = self.user.name
     json_obj[:author_email] = self.user.email

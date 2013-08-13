@@ -21,6 +21,7 @@ class PostReportsController < ApplicationController
     end
 
     @reported_post_ids = PostReport.recently_reported_posts_ids(from_time)
-    @posts = Post.where(:id => @reported_post_ids).paginate(:page => params[:page])
+    @posts = Post.select("posts.*, post_bans.id as ban_id").joins("FULL OUTER JOIN post_bans ON post_bans.post_id = posts.id").where(:id => @reported_post_ids).paginate(:page => params[:page])
+    
   end
 end

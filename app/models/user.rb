@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
   has_many :notifications, :foreign_key => :receiver_id, :dependent => :destroy
   has_many :unviewed_notifications, :class_name => 'Notification', :foreign_key => :receiver_id, :conditions => "viewed = false"
   has_many :post_reports
+  has_many :post_bans
 
   before_save { |user| user.email = email.downcase }
   before_save :create_remember_token

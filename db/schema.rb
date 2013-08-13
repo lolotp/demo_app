@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130813022416) do
+ActiveRecord::Schema.define(:version => 20130813085629) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -119,6 +119,16 @@ ActiveRecord::Schema.define(:version => 20130813022416) do
   add_index "notifications", ["receiver_id"], :name => "index_notifications_on_receiver_id"
   add_index "notifications", ["viewed"], :name => "index_notifications_on_viewed"
 
+  create_table "post_bans", :force => true do |t|
+    t.integer  "post_id"
+    t.integer  "user_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "post_bans", ["post_id", "user_id"], :name => "index_post_bans_on_post_id_and_user_id", :unique => true
+  add_index "post_bans", ["post_id"], :name => "index_post_bans_on_post_id"
+
   create_table "post_reports", :force => true do |t|
     t.integer  "user_id"
     t.integer  "post_id"
@@ -136,7 +146,7 @@ ActiveRecord::Schema.define(:version => 20130813022416) do
     t.text     "content"
     t.string   "file_url"
     t.integer  "user_id"
-    t.integer  "view_count",     :default => 0
+    t.integer  "ban_count",      :default => 0
     t.integer  "like_count",     :default => 0
     t.integer  "rating"
     t.float    "longitude",      :default => 0.0

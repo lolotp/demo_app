@@ -13,6 +13,18 @@
     Posted <%= time_ago_in_words(reported_post.created_at) %> ago. <br>
     <%= link_to "Reports", reports_post_path(reported_post) %>
   </span>
+  <div id=issued_bans_<%= reported_post.id %> >
+    Issued bans: <%= reported_post.ban_count %>
+  </div>
+  <div id=post_form_<%= reported_post.id%> >
+  <% if reported_post.ban_id %>
+    <%= render 'shared/post_unban', :post_id => reported_post.id %>
+  <% else %>
+    <%= render 'shared/post_ban', :post_id => reported_post.id%>
+  <% end %>
+  </div>
+  
+
   </p>
 </li>
 
