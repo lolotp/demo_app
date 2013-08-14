@@ -42,6 +42,7 @@ class StaticPagesController < ApplicationController
   end
   
   def terms_of_use
+    render :layout => false
   end
 
   def contact
