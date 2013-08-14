@@ -89,9 +89,14 @@ class PostsController < ApplicationController
     end
   end
 
-  def media_url
+  def thumbnail
     post = Post.find(params[:id])
-    redirect_to PostsHelper::media_url(post).to_s
+    redirect_to thumbnail_url(post).to_s
+  end
+
+  def media
+    post = Post.find(params[:id])
+    redirect_to media_url(post).to_s
   end
   
   def reports

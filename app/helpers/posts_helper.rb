@@ -13,7 +13,7 @@ module PostsHelper
     radius_filter
   end
   
-  def post_thumbnail(post)
+  def thumbnail_url(post)
     s3 = AWS::S3.new({
       :access_key_id => ENV['S3_KEY'],
       :secret_access_key => ENV['S3_SECRET']
@@ -21,8 +21,11 @@ module PostsHelper
     #user avatar is stored as an image file with the same name as user.email on amazon s3
     object = s3.buckets[ ENV['USER_MEDIA_BUCKET'] ].objects[post.thumbnail_url]
 
-    url = object.url_for(:read,:expires => 20.minutes.from_now, :secure => true )
-    image_tag(url, alt: "broken link", class: "gravatar")
+    object.url_for(:read,:expires => 20.minutes.from_now, :secure => true )
+  end
+
+  def post_thumbnail(post)
+    image_tag(thumbnail_post_path(post), alt: "broken link", class: "gravatar")
   end
 
   def media_url(post)

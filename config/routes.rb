@@ -14,6 +14,7 @@ DemoApp::Application.routes.draw do
 			get :relation_follow
       get :amazon_s3_temporary_credentials
       get :details
+      get :avatar
     end
   end
   resources :sessions,   only: [:new, :create, :destroy]
@@ -21,7 +22,8 @@ DemoApp::Application.routes.draw do
     member do
       get :comments
       get :reports
-      get :media_url
+      get :media
+      get :thumbnail
     end
   end
   resources :post_bans, only: [:create, :destroy]

@@ -1,7 +1,8 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
+  include UsersHelper
   before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees]
-  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details]
+  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details, :avatar]
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
   
@@ -185,6 +186,11 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.json { render json: session.credentials }
     end
+  end
+
+  def avatar
+    @user = User.find(params[:id])
+    redirect_to avatar_s3_url(@user).to_s
   end
   
   private
