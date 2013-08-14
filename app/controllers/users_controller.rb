@@ -16,9 +16,9 @@ class UsersController < ApplicationController
     if (current_user == @user or current_user.admin?)
       @posts = @user.posts.paginate(page: params[:page])
     elsif (current_user.friend?(@user))
-      @posts = @user.posts.where("privacy_option != 'private'").paginate(page: params[:page])
+      @posts = @user.posts.where("privacy_option != 'private' AND ban_count < 2").paginate(page: params[:page])
     else
-      @posts = @user.posts.where("privacy_option = 'public'").paginate(page: params[:page])
+      @posts = @user.posts.where("privacy_option = 'public' AND ban_count < 2").paginate(page: params[:page])
     end
 
     respond_to do |format|
