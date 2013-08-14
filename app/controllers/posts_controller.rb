@@ -2,7 +2,7 @@ class PostsController < ApplicationController
   include PostsHelper
   before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index, :update]
   before_filter :signed_in_user
-  before_filter :admin_user, :only => [:reports, :media_url]
+  before_filter :admin_user, :only => [:reports, :media, :thumbnail]
   before_filter :correct_user,  only: :destroy
 
   def create
