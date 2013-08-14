@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130813085629) do
+ActiveRecord::Schema.define(:version => 20130814161200) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -162,6 +162,7 @@ ActiveRecord::Schema.define(:version => 20130813085629) do
     t.datetime "posted_at"
   end
 
+  add_index "posts", ["ban_count"], :name => "index_posts_on_ban_count"
   add_index "posts", ["created_at"], :name => "index_posts_on_created_at"
   add_index "posts", ["landmark_id"], :name => "index_posts_on_landmark_id"
   add_index "posts", ["privacy_option"], :name => "index_posts_on_privacy_option"
