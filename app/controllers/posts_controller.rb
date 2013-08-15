@@ -65,7 +65,13 @@ class PostsController < ApplicationController
     if params[:post]
       if current_user.id == post.user_id
         privacy_option = params[:post][:privacy_option]
-        update_result = post.update_attribute(:privacy_option, privacy_option)
+        topic = params[:post][:topic]
+        if topic
+          update_result = post.update_attribute(:topic, topic)
+        end
+        if privacy_option
+          update_result = post.update_attribute(:privacy_option, privacy_option)
+        end
       end
     end
 
