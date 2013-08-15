@@ -36,9 +36,9 @@ class UsersController < ApplicationController
   
   def create
     @user = User.new(params[:user])
+    @user.phone_number = params[:phone_number]
     if @user.save
-      phone_number = params[:phone_number]
-      Resque.enqueue(SendUserActivationCodeResqueJob, @user.id, phone_number)
+      Resque.enqueue(SendUserActivationCodeResqueJob, @user.id, @user.phone_number)
       respond_to do |format|
         format.json { render json: { :name => @user.name, :user => @user } }
         format.html { redirect_to root_path }
@@ -55,10 +55,21 @@ class UsersController < ApplicationController
     user = User.find(params[:id])
     if user && user.authenticate(params[:password])
       phone_number = params[:phone_number]
-      Resque.enqueue(SendUserActivationCodeResqueJob, user.id, phone_number)
-    end
-    respond_to do |format|
-      format.json {render json:"ok"}
+      update_result = user.update_attribute(:phone_number, phone_number)
+      if (update_result)
+        Resque.enqueue(SendUserActivationCodeResqueJob, user.id, phone_number)
+        respond_to do |format|
+          format.json {render json:"ok"}
+        end
+      else
+        respond_to do |format|
+          format.json {render json:"failed to save phone number", :status => 400}
+        end
+      end
+    else
+      respond_to do |format|
+        format.json {render json:"unauthorized user", :status => 401}
+      end
     end
   end  
 
@@ -209,14 +220,22 @@ class UsersController < ApplicationController
   def activate
     user = User.find(params[:id])
     code = params[:confirmation_code].to_i
-    if user.confirmation_code == 0 or user.confirmation_code == code.to_i
+    if (user.updated_at < 1.hour.ago)
+      user.update_attribute(:confirmation_code, Random.new.rand(100_000..999_999))
+      Resque.enqueue(SendUserActivationCodeResqueJob, user.id, user.phone_number)
+      respond_to do |format|
+        format.json { render json: {:error_message => "Your code has expired. We have sent you a new code."}, :status => 401 }
+      end
+      return
+    end
+    if (user.confirmation_code == 0 or user.confirmation_code == code.to_i)
       user.update_attribute(:confirmation_code, 0)
       respond_to do |format|
         format.json { render json: "ok" }
       end
-    else
+    else   
       respond_to do |format|
-        format.json { render json: "Invalid code" + code.to_s, :status => 400 }
+        format.json { render json: {:error_message => "Invalid code"}, :status => 401 }
       end
     end
   end
