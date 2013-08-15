@@ -134,7 +134,7 @@ class User < ActiveRecord::Base
   end
   
   def self.find_matched_users(search_string)    
-    where("name LIKE '%#{search_string}%' OR email LIKE '%#{search_string}%'")
+    where("(name LIKE '%#{search_string}%' OR email LIKE '%#{search_string}%') AND confirmation_code = 0")
   end
 
   def gravatar_url(options = { size: 50 })
