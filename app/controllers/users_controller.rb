@@ -39,7 +39,7 @@ class UsersController < ApplicationController
     if @user.save
       
       respond_to do |format|
-        format.json { render json: @user }
+        format.json { render json: { :name => @user.name, @user } }
         format.html { redirect_to root_path }
       end        
     else
