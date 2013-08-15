@@ -9,6 +9,7 @@ gem 'bootstrap-will_paginate', '0.0.6'
 gem "aws-sdk", "~> 1.11.0"
 gem 'delayed_job_active_record'
 gem 'resque', "~> 1.22.0"
+gem 'resque-retry'
 
 group :development do
   gem 'pg'

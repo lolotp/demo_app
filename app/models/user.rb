@@ -189,6 +189,6 @@ private
     end
 
     def create_confirmation_code
-      self.confirmation_code = 0#Random.new.rand(100_000..999_999)
+      self.confirmation_code = Random.new.rand(100_000..999_999)
     end
 end

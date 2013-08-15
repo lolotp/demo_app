@@ -1,7 +1,7 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
   include UsersHelper
-  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees, :activate]
+  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees, :activate, :send_activation_code]
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details, :avatar]
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
@@ -37,7 +37,8 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     if @user.save
-      
+      phone_number = params[:phone_number]
+      Resque.enqueue(SendUserActivationCodeResqueJob, @user.id, phone_number)
       respond_to do |format|
         format.json { render json: { :name => @user.name, :user => @user } }
         format.html { redirect_to root_path }
@@ -49,7 +50,18 @@ class UsersController < ApplicationController
       end
     end
   end
-  
+
+  def send_activation_code
+    user = User.find(params[:id])
+    if user && user.authenticate(params[:password])
+      phone_number = params[:phone_number]
+      Resque.enqueue(SendUserActivationCodeResqueJob, user.id, phone_number)
+    end
+    respond_to do |format|
+      format.json {render json:"ok"}
+    end
+  end  
+
   def edit
   end
 
@@ -102,7 +114,6 @@ class UsersController < ApplicationController
   end
 
   def requested_friends
-    #@requested_friends = @user.requested_friends#.paginate(page: params[:page])
 		@requested_friends = User.select("users.*, friendships.id as friendship_id").joins("INNER JOIN friendships ON users.id = friendships.friend_id").where("friendships.user_id=:user_id AND friendships.status = 'requested'", :user_id => params[:id])
     respond_to do |format|
       format.json { render json: @requested_friends }
@@ -197,7 +208,7 @@ class UsersController < ApplicationController
 
   def activate
     user = User.find(params[:id])
-    code = params[:confirmation_code]
+    code = params[:confirmation_code].to_i
     if user.confirmation_code == 0 or user.confirmation_code == code.to_i
       user.update_attribute(:confirmation_code, 0)
       respond_to do |format|

@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
       if (user.confirmation_code != 0)
         flash[:error] = "Unactivated account"
         respond_to do |format|
-          format.json { render json: "Unactivated account"}
+          format.json { render json:  { :unactivated_warning => "Unactivated account", :user_id => user.id } }
           format.html { redirect_to root_path }
         end
       else

@@ -16,6 +16,7 @@ DemoApp::Application.routes.draw do
       get :details
       get :avatar
       post :activate
+      post :send_activation_code
     end
   end
   resources :sessions,   only: [:new, :create, :destroy]
