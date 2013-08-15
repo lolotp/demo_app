@@ -17,7 +17,7 @@ class SessionsController < ApplicationController
         sign_in user
         lat = params[:latitude]
         long = params[:longitude]
-        redirect_back_or(root_path, lat, long)
+        redirect_back_or(post_reports_path, lat, long)
       end
     else      
       respond_to do |format|
