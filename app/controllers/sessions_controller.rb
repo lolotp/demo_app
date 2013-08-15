@@ -7,10 +7,18 @@ class SessionsController < ApplicationController
   def create
     user = User.find_by_email(params[:session][:email].downcase)
     if user && user.authenticate(params[:session][:password])
-      sign_in user
-      lat = params[:latitude]
-      long = params[:longitude]
-      redirect_back_or(root_path, lat, long)       
+      if (user.confirmation_code != 0)
+        flash[:error] = "Unactivated account"
+        respond_to do |format|
+          format.json { render json: "Unactivated account"}
+          format.html { redirect_to root_path }
+        end
+      else
+        sign_in user
+        lat = params[:latitude]
+        long = params[:longitude]
+        redirect_back_or(root_path, lat, long)
+      end
     else      
       respond_to do |format|
         format.json {render json: "Unable to authenticate user", :status => 401}

@@ -15,6 +15,7 @@ DemoApp::Application.routes.draw do
       get :amazon_s3_temporary_credentials
       get :details
       get :avatar
+      post :activate
     end
   end
   resources :sessions,   only: [:new, :create, :destroy]

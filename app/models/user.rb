@@ -12,7 +12,7 @@
 
 class User < ActiveRecord::Base
   include UsersHelper
-  attr_accessible :email, :name, :password, :password_confirmation
+  attr_accessible :email, :name, :password, :password_confirmation, :confirmation_code
   has_secure_password
 
   has_many :microposts, dependent: :destroy
@@ -34,6 +34,7 @@ class User < ActiveRecord::Base
 
   before_save { |user| user.email = email.downcase }
   before_save :create_remember_token
+  before_create :create_confirmation_code
   
   validates :name,  presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -185,5 +186,9 @@ private
 
     def create_remember_token
       self.remember_token = SecureRandom.urlsafe_base64
+    end
+
+    def create_confirmation_code
+      self.confirmation_code = Random.new.rand(100_000..999_999)
     end
 end

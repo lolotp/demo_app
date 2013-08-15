@@ -1,7 +1,7 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
   include UsersHelper
-  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees]
+  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees, :activate]
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details, :avatar]
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
@@ -37,9 +37,10 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     if @user.save
-      sign_in @user
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to root_path        
+      respond_to do |format|
+        format.json { render json: "ok" }
+        format.html { redirect_to root_path }
+      end        
     else
       respond_to do |format|
         format.json { render json: "Error registering user: " + @user.errors.full_messages.first, :status => 404 }
@@ -191,6 +192,21 @@ class UsersController < ApplicationController
   def avatar
     @user = User.find(params[:id])
     redirect_to avatar_s3_url(@user).to_s
+  end
+
+  def activate
+    user = User.find(params[:id])
+    code = params[:confirmation_code]
+    if user.confirmation_code == 0 or user.confirmation_code == code.to_i
+      user.update_attribute(:confirmation_code, 0)
+      respond_to do |format|
+        format.json { render json: "ok" }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: "Invalid code" + code.to_s, :status => 400 }
+      end
+    end
   end
   
   private
