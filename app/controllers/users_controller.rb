@@ -37,8 +37,9 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     if @user.save
+      
       respond_to do |format|
-        format.json { render json: "ok" }
+        format.json { render json: :ok => "ok" }
         format.html { redirect_to root_path }
       end        
     else
