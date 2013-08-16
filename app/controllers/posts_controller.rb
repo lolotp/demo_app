@@ -42,6 +42,7 @@ class PostsController < ApplicationController
   end
 
   def destroy
+    @post = Post.find(params[:id])
     @post.destroy
     if mobile_device?
       respond_to do |format|
