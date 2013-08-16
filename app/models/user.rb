@@ -76,10 +76,10 @@ class User < ActiveRecord::Base
   
   def request_friend!(other_user)
     unless id == other_user.id or Friendship.exists?({:user_id => id, :friend_id => other_user.id})
-      pending_friendship = friendships.create(friend_id: other_user.id)
-      pending_friendship.status = "pending"
-      request_friendship = other_user.friendships.create(friend_id: id)
-      request_friendship.status = "requested"
+      pending_friendship = friendships.create(:friend_id => other_user.id, :status => "pending")
+      #pending_friendship.status = "pending"
+      request_friendship = other_user.friendships.create(:friend_id => id, :status => "requested")
+      #request_friendship.status = "requested"
       transaction do
         pending_friendship.save
         request_friendship.save
