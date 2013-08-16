@@ -1,6 +1,7 @@
 include PostsHelper
 
 class Post < ActiveRecord::Base
+  include SessionsHelper
 
   attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option, :subject, :thumbnail_url, :release, :topic, :posted_at, :like_count, :ban_count
   belongs_to :user
