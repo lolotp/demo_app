@@ -1,6 +1,9 @@
 class PostsController < ApplicationController
+  include PostsHelper
+
   before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index, :update]
   before_filter :signed_in_user
+  before_filter :admin_user, :only => [:reports, :media, :thumbnail]
   before_filter :correct_user,  only: :destroy
 
   def create
@@ -55,6 +58,9 @@ class PostsController < ApplicationController
   end
 
   def destroy
+    unless (@post)
+      @post = Post.find(params[:id])
+    end
     @post.destroy
     if mobile_device?
       respond_to do |format|
@@ -69,6 +75,37 @@ class PostsController < ApplicationController
     end
   end
 
+  def update
+    puts "updating post"
+    post = Post.find(params[:id])
+    thumbs_up = params[:thumbs_up]
+    update_result = true
+    #if there is update to the post params    
+    if params[:post]
+      if current_user.id == post.user_id
+        privacy_option = params[:post][:privacy_option]
+        topic = params[:post][:topic]
+        if topic
+          update_result = post.update_attribute(:topic, topic)
+        end
+        if privacy_option
+          update_result = post.update_attribute(:privacy_option, privacy_option)
+        end
+      end
+    end
+
+    if thumbs_up
+      update_result = update_result and post.increment!(:like_count)
+    end
+    respond_to do |format|
+      if update_result
+        format.json { render json: "ok" }
+      else
+        format.json { render json: post.errors.full_messages.first, :status => 400 }
+      end
+    end
+  end
+
   def comments
     @post = Post.find_by_id (params[:id])
     @comments = @post.comments.paginate(page: params[:page])
@@ -76,9 +113,29 @@ class PostsController < ApplicationController
       format.json { render json: @comments }
     end
   end
+
+  def thumbnail
+    post = Post.find(params[:id])
+    redirect_to s3_thumbnail_url(post).to_s
+  end
+
+  def media
+    post = Post.find(params[:id])
+    redirect_to s3_media_url(post).to_s
+  end
+  
+  def reports
+    post = Post.find(params[:id])
+    @num_inappropriate = PostReport.where("post_id = :post_id AND category='Inappropriate'", :post_id => post.id).count
+    @num_copyright = PostReport.where("post_id = :post_id AND category='Copyright content'", :post_id => post.id).count
+    @reports = PostReport.where("post_id = :post_id", :post_id => post.id).paginate(:page => params[:page])
+  end
   
   private 
     def correct_user
+      if current_user.admin?
+        return
+      end
       @post = current_user.posts.find_by_id(params[:id])
       unauthorized_result if @post.nil?
     end

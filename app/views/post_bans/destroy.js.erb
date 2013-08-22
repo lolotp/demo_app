@@ -1,0 +1,6 @@
+<% if @ok %>
+  $("#post_form_<%= @post_id %>").html("<%= escape_javascript(render "shared/post_ban", :post_id => @post_id) %>")
+  $("#issued_bans_<%= @post_id %>").html("Issued bans: <%= @ban_count %>")
+<% else %>
+  alert("failure unbanning, please try again")
+<% end %>

@@ -1,0 +1,10 @@
+<div class="span8">
+  <h3>Reports for this post</h3>
+  Number of reports that indicate this post is inappropriate is <%= @num_inappropriate %> <br>
+  Number of reports that indicate this post infringes copyright is <%= @num_copyright %> <br>
+  <ol class="posts">
+    <%= render @reports %>
+  </ol>
+
+  <%= will_paginate @reports %>
+</div>

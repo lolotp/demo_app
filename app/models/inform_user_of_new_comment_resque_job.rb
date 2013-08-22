@@ -31,6 +31,10 @@ class InformUserOfNewCommentResqueJob
         Resque.enqueue(self, comment_id, at_time, should_inform_owner)
       end #if not.save
     end #if commenter.id
+
+    #send notifications to commenter
+    notification = commenter.notifications.build( :content => "<n>You commented on <a href=\"memcap://posts/#{post.id}\">post</a> <a href=\"memcap://comments/#{comment.id}\"/></n>", :viewed => false)
+    notification.save
     
     puts "posting to user who commented before "
     puts at_time

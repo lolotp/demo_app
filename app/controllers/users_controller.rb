@@ -1,7 +1,8 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
-  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees]
-  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details]
+  include UsersHelper
+  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees, :activate, :send_activation_code]
+  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details, :avatar]
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
   
@@ -12,16 +13,17 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find_by_id(params[:id])
-    if (current_user == @user)
+    if (current_user == @user or current_user.admin?)
       @posts = @user.posts.paginate(page: params[:page])
     elsif (current_user.friend?(@user))
-      @posts = @user.posts.where("privacy_option != 'private'").paginate(page: params[:page])
-    elsif (current_user.following?(@user))
-      @posts = @user.posts.where("privacy_option = 'public'").paginate(page: params[:page])
+      @posts = @user.posts.where("privacy_option != 'private' AND ban_count < 2").paginate(page: params[:page])
+    else
+      @posts = @user.posts.where("privacy_option = 'public' AND ban_count < 2").paginate(page: params[:page])
     end
+
     respond_to do |format|
       format.html {}
-      format.json { render json: @posts }
+      format.json { render json: @posts, :current_user_id => current_user.id }
     end
   end
   
@@ -34,10 +36,13 @@ class UsersController < ApplicationController
   
   def create
     @user = User.new(params[:user])
+    @user.phone_number = params[:phone_number]
     if @user.save
-      sign_in @user
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to root_path        
+      Resque.enqueue(SendUserActivationCodeResqueJob, @user.id, @user.phone_number)
+      respond_to do |format|
+        format.json { render json: { :name => @user.name, :user => @user } }
+        format.html { redirect_to root_path }
+      end        
     else
       respond_to do |format|
         format.json { render json: "Error registering user: " + @user.errors.full_messages.first, :status => 404 }
@@ -45,7 +50,29 @@ class UsersController < ApplicationController
       end
     end
   end
-  
+
+  def send_activation_code
+    user = User.find(params[:id])
+    if user && user.authenticate(params[:password])
+      phone_number = params[:phone_number]
+      update_result = user.update_attribute(:phone_number, phone_number)
+      if (update_result)
+        Resque.enqueue(SendUserActivationCodeResqueJob, user.id, phone_number)
+        respond_to do |format|
+          format.json {render json:"ok"}
+        end
+      else
+        respond_to do |format|
+          format.json {render json:"failed to save phone number", :status => 400}
+        end
+      end
+    else
+      respond_to do |format|
+        format.json {render json:"unauthorized user", :status => 401}
+      end
+    end
+  end  
+
   def edit
   end
 
@@ -98,7 +125,6 @@ class UsersController < ApplicationController
   end
 
   def requested_friends
-    #@requested_friends = @user.requested_friends#.paginate(page: params[:page])
 		@requested_friends = User.select("users.*, friendships.id as friendship_id").joins("INNER JOIN friendships ON users.id = friendships.friend_id").where("friendships.user_id=:user_id AND friendships.status = 'requested'", :user_id => params[:id])
     respond_to do |format|
       format.json { render json: @requested_friends }
@@ -161,8 +187,8 @@ class UsersController < ApplicationController
 	end
 
   def amazon_s3_temporary_credentials
-    my_access_key_id = 'AKIAIA6CBZ5N2HEVI64Q'
-    my_secret_key = '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'
+    my_access_key_id = ENV['S3_KEY']
+    my_secret_key = ENV['S3_SECRET']
     
     resource = params[:resource]
 
@@ -185,6 +211,34 @@ class UsersController < ApplicationController
       format.json { render json: session.credentials }
     end
   end
+
+  def avatar
+    @user = User.find(params[:id])
+    redirect_to s3_avatar_url(@user).to_s
+  end
+
+  def activate
+    user = User.find(params[:id])
+    code = params[:confirmation_code].to_i
+    if (user.updated_at < 1.hour.ago)
+      user.update_attribute(:confirmation_code, Random.new.rand(100_000..999_999))
+      Resque.enqueue(SendUserActivationCodeResqueJob, user.id, user.phone_number)
+      respond_to do |format|
+        format.json { render json: {:error_message => "Your code has expired. We have sent you a new code."}, :status => 401 }
+      end
+      return
+    end
+    if (user.confirmation_code == 0 or user.confirmation_code == code.to_i)
+      user.update_attribute(:confirmation_code, 0)
+      respond_to do |format|
+        format.json { render json: "ok" }
+      end
+    else   
+      respond_to do |format|
+        format.json { render json: {:error_message => "Invalid code"}, :status => 401 }
+      end
+    end
+  end
   
   private
 
@@ -193,9 +247,5 @@ class UsersController < ApplicationController
       if (!@user or !current_user?(@user))
         unauthorized_result
       end
-    end
-    
-    def admin_user
-      unauthorized_result unless current_user.admin?
     end
 end

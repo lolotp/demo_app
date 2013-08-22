@@ -8,7 +8,7 @@ class StaticPagesController < ApplicationController
       long = params[:longitude]
       levels = params[:levels]
       view_follow = params[:view_follow]
-      @notifications = current_user.unviewed_notifications;
+      @notifications = current_user.notifications.where("created_at > :ten_days_back", ten_days_back: 10.days.ago);
       if (lat and long and levels)
         @post_feed_items = current_user.post_feed_by_social_radius(lat,long, levels).paginate(page: params[:page])
         @unreleased_capsules_count = Post.number_of_unreleased_capsule_by_location(current_user,lat,long,levels)
@@ -39,6 +39,10 @@ class StaticPagesController < ApplicationController
   end
 
   def about
+  end
+  
+  def terms_of_use
+    render :layout => false
   end
 
   def contact

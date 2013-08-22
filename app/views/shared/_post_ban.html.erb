@@ -1,0 +1,4 @@
+<%= form_for(current_user.post_bans.build(), remote: true) do |f| %>
+  <%= f.hidden_field :post_id, { :value => post_id } %>
+  <%= f.submit "Ban", class: "btn btn-large btn-primary" %>
+<% end %>

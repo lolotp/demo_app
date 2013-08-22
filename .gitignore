@@ -6,6 +6,8 @@
 
 # Ignore bundler config
 /.bundle
+setup_env.sh
+dump.rdb
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
@@ -21,4 +23,3 @@ doc/
 .project
 .DS_Store
 .idea
-

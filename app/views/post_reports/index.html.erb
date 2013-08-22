@@ -1,0 +1,21 @@
+<div class="span8">
+  <h3>Posts reported recently</h3>
+  <script>
+  $(function() {
+    $( "#datepicker" ).datepicker({
+      dateFormat: 'mm/dd/yy'
+    });
+  });
+  </script>
+  <p>
+    <form action="/post_reports" method="get"/>
+       Showing posts reported from date
+       <input type="text" id="datepicker" name="from_time" value = '<%= @from_time.strftime("%m/%d/%Y") %>'/>
+       <input type="submit" value="Reload"/>
+    </form></p>
+  <ol class="posts">
+    <%= render partial: 'shared/reported_post', collection: @posts %>
+  </ol>
+
+  <%= will_paginate @posts %>
+</div>

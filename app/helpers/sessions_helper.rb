@@ -52,4 +52,8 @@ module SessionsHelper
       unauthorized_result
     end
   end
+
+  def admin_user
+    unauthorized_result unless current_user.admin?
+  end
 end

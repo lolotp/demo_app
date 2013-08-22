@@ -12,7 +12,7 @@
 
 class User < ActiveRecord::Base
   include UsersHelper
-  attr_accessible :email, :name, :password, :password_confirmation
+  attr_accessible :email, :name, :password, :password_confirmation, :confirmation_code
   has_secure_password
 
   has_many :microposts, dependent: :destroy
@@ -30,9 +30,12 @@ class User < ActiveRecord::Base
   has_many :notifications, :foreign_key => :receiver_id, :dependent => :destroy
   has_many :unviewed_notifications, :class_name => 'Notification', :foreign_key => :receiver_id, :conditions => "viewed = false"
   has_many :user_location_feeds
+  has_many :post_reports
+  has_many :post_bans
 
   before_save { |user| user.email = email.downcase }
   before_save :create_remember_token
+  before_create :create_confirmation_code
   
   validates :name,  presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -74,10 +77,10 @@ class User < ActiveRecord::Base
   
   def request_friend!(other_user)
     unless id == other_user.id or Friendship.exists?({:user_id => id, :friend_id => other_user.id})
-      pending_friendship = friendships.create(friend_id: other_user.id)
-      pending_friendship.status = "pending"
-      request_friendship = other_user.friendships.create(friend_id: id)
-      request_friendship.status = "requested"
+      pending_friendship = friendships.create(:friend_id => other_user.id, :status => "pending")
+      #pending_friendship.status = "pending"
+      request_friendship = other_user.friendships.create(:friend_id => id, :status => "requested")
+      #request_friendship.status = "requested"
       transaction do
         pending_friendship.save
         request_friendship.save
@@ -132,7 +135,7 @@ class User < ActiveRecord::Base
   end
   
   def self.find_matched_users(search_string)    
-    where("name LIKE '%#{search_string}%' OR email LIKE '%#{search_string}%'")
+    where("(name LIKE '%#{search_string}%' OR email LIKE '%#{search_string}%') AND confirmation_code = 0")
   end
 
   def gravatar_url(options = { size: 50 })
@@ -140,7 +143,7 @@ class User < ActiveRecord::Base
     size = options[:size]
     return_url = "https://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}"
     return_url
-  end  
+  end
 
   def as_json(options={})
     json_obj = super(:only => [:name,:email,:id, :updated_at])
@@ -184,5 +187,9 @@ private
 
     def create_remember_token
       self.remember_token = SecureRandom.urlsafe_base64
+    end
+
+    def create_confirmation_code
+      self.confirmation_code = Random.new.rand(100_000..999_999)
     end
 end

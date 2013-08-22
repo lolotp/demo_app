@@ -14,14 +14,22 @@ DemoApp::Application.routes.draw do
 			get :relation_follow
       get :amazon_s3_temporary_credentials
       get :details
+      get :avatar
+      post :activate
+      post :send_activation_code
     end
   end
   resources :sessions,   only: [:new, :create, :destroy]
   resources :posts, only: [:create, :destroy, :index, :update] do
     member do
       get :comments
+      get :reports
+      get :media
+      get :thumbnail
     end
   end
+  resources :post_bans, only: [:create, :destroy]
+  resources :post_reports, only: [:create, :index]
   resources :friendships, only: [:create, :destroy, :update]
   resources :comments, only: [:create]
   resources :landmarks, only: [:create, :index, :show]
@@ -33,11 +41,12 @@ DemoApp::Application.routes.draw do
   match '/help',    to: 'static_pages#help'
   match '/about',   to: 'static_pages#about'
   match '/contact', to: 'static_pages#contact'
+  match '/terms_of_use', to: 'static_pages#terms_of_use'
 
   match '/signup',  to: 'users#new'
   match '/signin',  to: 'sessions#new'
   match '/signout', to: 'sessions#destroy', via: :delete
-
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

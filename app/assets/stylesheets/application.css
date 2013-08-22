@@ -11,3 +11,6 @@
  *= require_self
  *= require custom
  */
+/*
+ *= require jquery.ui.all
+ */

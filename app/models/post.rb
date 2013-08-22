@@ -1,8 +1,9 @@
 include PostsHelper
 
 class Post < ActiveRecord::Base
+  include SessionsHelper
 
-  attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option, :subject, :thumbnail_url, :release, :topic, :posted_at
+  attr_accessible :content, :file_url, :latitude, :longitude, :rating, :privacy_option, :subject, :thumbnail_url, :release, :topic, :posted_at, :like_count, :ban_count
   belongs_to :user
   belongs_to :landmark
 
@@ -27,14 +28,14 @@ class Post < ActiveRecord::Base
   def self.from_friends(user)
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id AND status='accepted'"                
-    where("(user_id IN (#{friend_user_ids}) AND (privacy_option <> 'private') )", 
+    where("((ban_count < 2) AND user_id IN (#{friend_user_ids}) AND (privacy_option <> 'private') )", 
           user_id: user.id)
   end
 
   def self.from_followees(user)
     followee_user_ids = "SELECT followee_id FROM follows
                          WHERE user_id = :user_id"
-    where("(( user_id IN (#{followee_user_ids}) OR user_id IN (SELECT id FROM users WHERE public = true) ) AND privacy_option = 'public')", 
+    where("( (ban_count) < 2 AND ( user_id IN (#{followee_user_ids}) OR user_id IN (SELECT id FROM users WHERE public = true) ) AND privacy_option = 'public')", 
           user_id: user.id)
   end
   # { :levels => [ { :dist => 2000, :popularity => 0 }, {:dist => 10000, :popularity => 100 } ] }
@@ -42,7 +43,7 @@ class Post < ActiveRecord::Base
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id AND status='accepted'"
     radius_filter = gen_radius_filter_query(cur_lat, cur_long, levels)
-    where("(#{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) ) )", 
+    where("( (ban_count) < 2 AND #{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) ))", 
           user_id: user.id)
   end
 
@@ -67,10 +68,17 @@ class Post < ActiveRecord::Base
 
   def as_json(options={})
     json_obj = super
-    if (self.release and self.release > DateTime.now)
-      json_obj[:content]  = "Release on " + self.release.to_s()
-      json_obj[:file_url] = "TimeCapsule"
-      json_obj[:thumbnail_url] = "TimeCapsule"
+    if (self.ban_count > 1 and ((not options[:current_user_id]) or self.user_id != options[:current_user_id]) )
+      json_obj[:subject] = "Subject hidden because post flagged as inappropriate"
+      json_obj[:content]  = "Content hidden because post flagged as inappropriate"
+      json_obj[:file_url] = "FlaggedPost"
+      json_obj[:thumbnail_url] = "FlaggedPost"
+    else
+      if (self.release and self.release > DateTime.now)
+        json_obj[:content]  = "Release on " + self.release.to_s()
+        json_obj[:file_url] = "TimeCapsule"
+        json_obj[:thumbnail_url] = "TimeCapsule"
+      end
     end
     json_obj[:author_name] = self.user.name
     json_obj[:author_email] = self.user.email
