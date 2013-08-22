@@ -1,13 +1,13 @@
 <li id="<%= reported_post.id %>">
   
-  <%= link_to avatar_for(reported_post.user), reported_post.user %>
+  <%= link_to avatar_image_tag(reported_post.user), reported_post.user %>
   <span class="user">
     <%= link_to reported_post.user.name, reported_post.user %>
   </span>
 
   <p>
     Post id: <%= reported_post.id %> <br>
-    <%= link_to post_thumbnail(reported_post), media_post_path(reported_post) %>
+    <%= link_to post_thumbnail_image_tag(reported_post), media_post_path(reported_post) %>
   </p>
   <p style="clear: both;">
   <span class="content"><%= reported_post.content %></span>

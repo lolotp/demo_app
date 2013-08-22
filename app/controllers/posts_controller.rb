@@ -100,12 +100,12 @@ class PostsController < ApplicationController
 
   def thumbnail
     post = Post.find(params[:id])
-    redirect_to thumbnail_url(post).to_s
+    redirect_to s3_thumbnail_url(post).to_s
   end
 
   def media
     post = Post.find(params[:id])
-    redirect_to media_url(post).to_s
+    redirect_to s3_media_url(post).to_s
   end
   
   def reports

@@ -7,7 +7,7 @@ module UsersHelper
     image_tag(user.gravatar_url, alt: user.name, class: "gravatar")
   end
   
-  def avatar_s3_url(user)
+  def s3_avatar_url(user)
     s3 = AWS::S3.new({
       :access_key_id => ENV['S3_KEY'],
       :secret_access_key => ENV['S3_SECRET']
@@ -19,7 +19,7 @@ module UsersHelper
     
   end
 
-  def avatar_for(user)
+  def avatar_image_tag(user)
     image_tag(avatar_user_path(user), class: "gravatar", size: "50x50")
   end
 end

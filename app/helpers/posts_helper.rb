@@ -13,7 +13,7 @@ module PostsHelper
     radius_filter
   end
   
-  def thumbnail_url(post)
+  def s3_thumbnail_url(post)
     s3 = AWS::S3.new({
       :access_key_id => ENV['S3_KEY'],
       :secret_access_key => ENV['S3_SECRET']
@@ -24,11 +24,11 @@ module PostsHelper
     object.url_for(:read,:expires => 20.minutes.from_now, :secure => true )
   end
 
-  def post_thumbnail(post)
+  def post_thumbnail_image_tag(post)
     image_tag(thumbnail_post_path(post), alt: "broken link", class: "gravatar")
   end
 
-  def media_url(post)
+  def s3_media_url(post)
     s3 = AWS::S3.new({
       :access_key_id => ENV['S3_KEY'],
       :secret_access_key => ENV['S3_SECRET']

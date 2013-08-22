@@ -214,7 +214,7 @@ class UsersController < ApplicationController
 
   def avatar
     @user = User.find(params[:id])
-    redirect_to avatar_s3_url(@user).to_s
+    redirect_to s3_avatar_url(@user).to_s
   end
 
   def activate

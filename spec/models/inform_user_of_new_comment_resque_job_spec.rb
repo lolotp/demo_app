@@ -29,6 +29,15 @@ describe InformUserOfNewCommentResqueJob do
     end
   end
 
+  describe "commenter should be informed" do
+    subject { other_user }
+    its(:notifications) { should_not be_empty}
+    describe "notifications should have id of user who commented on and post id" do
+      subject { other_user.notifications.first.content }
+      it { should include(@post.id.to_s) }
+    end
+  end
+
   describe "post owner should be informed" do
     before do
       @commented_user = User.find_by_id(@comment1.user_id)
