@@ -7,7 +7,7 @@ class PublishNonPublicPostLocationJob < Resque::JobWithStatus
   @retry_limit = 10
   
   def self.save_to_user_feed(post, user_id)
-    user_location_feed = UserLocationFeed.new(:latitude => post.latitude, :longitude => post.longitude)
+    user_location_feed = UserLocationFeed.new(:latitude => post.latitude, :longitude => post.longitude, :release => post.release)
     user_location_feed.post_id = post.id
     user_location_feed.user_id = user_id
     if not user_location_feed.save

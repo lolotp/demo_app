@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130815095328) do
+ActiveRecord::Schema.define(:version => 20130823171052) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -175,6 +175,7 @@ ActiveRecord::Schema.define(:version => 20130815095328) do
     t.float    "latitude"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.datetime "release"
   end
 
   add_index "public_post_locations", ["post_id"], :name => "index_public_post_locations_on_post_id", :unique => true
@@ -186,6 +187,7 @@ ActiveRecord::Schema.define(:version => 20130815095328) do
     t.float    "latitude"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.datetime "release"
   end
 
   add_index "user_location_feeds", ["user_id", "post_id"], :name => "index_user_location_feeds_on_user_id_and_post_id", :unique => true

@@ -15,7 +15,7 @@ class PublishPublicPostLocationJob
     end
     
     puts "creating location data"
-    public_post_location = PublicPostLocation.new(:latitude => post.latitude, :longitude => post.longitude)
+    public_post_location = PublicPostLocation.new(:latitude => post.latitude, :longitude => post.longitude, :release => post.release)
     public_post_location.post_id = post_id
     if not public_post_location.save
       #if entry already exists in the table

@@ -18,7 +18,7 @@ class StaticPagesController < ApplicationController
       end
       @notifications = current_user.notifications.where("created_at > :ten_days_back", ten_days_back: 10.days.ago);
       if (lat and long and levels)
-        @post_feed_items = current_user.post_feed_nearby(lat,long, nearby_radius).paginate(page: params[:page])
+        @post_feed_items = current_user.post_feed_nearby(lat,long, nearby_radius, params[:page] ? params[:page] : 1)
         @unreleased_capsules_count = Post.number_of_unreleased_capsule_by_location(current_user,lat,long,levels)
       elsif (!view_follow)
         @post_feed_items = current_user.post_feed.paginate(page: params[:page])

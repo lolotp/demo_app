@@ -46,6 +46,13 @@ class Post < ActiveRecord::Base
     where(:id => [public_post_ids.to_a, non_public_post_ids.to_a])
   end
 
+  def self.number_of_unreleased_capsule_by_location(user, cur_lat, cur_long, levels)
+    nearby_filter = gen_nearby_filter(cur_lat, cur_long, radius)
+    n_public_posts = PublicPostLocation.select("post_id").where(" #{nearby_filter} AND release > now()").count
+    n_non_public_posts = UserLocationFeed.select("post_id").where("user_id = :user_id AND #{nearby_filter} AND release > now()", :user_id => user.id).count
+    n_public_posts + n_non_public_posts
+  end
+
   # { :levels => [ { :dist => 2000, :popularity => 0 }, {:dist => 10000, :popularity => 100 } ] }
   def self.from_friends_by_social_radius(user, cur_lat, cur_long, levels)
     friend_user_ids = "SELECT friend_id FROM friendships
@@ -53,13 +60,6 @@ class Post < ActiveRecord::Base
     radius_filter = gen_radius_filter_query(cur_lat, cur_long, levels)
     where("( (ban_count) < 2 AND #{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) ))", 
           user_id: user.id)
-  end
-
-  def self.number_of_unreleased_capsule_by_location(user, cur_lat, cur_long, levels)
-    radius_filter = gen_radius_filter_query(cur_lat, cur_long, levels)
-    friend_user_ids = "SELECT friend_id FROM friendships
-                         WHERE user_id = " + user.id.to_s() + " AND status='accepted'"
-    where(" ( (privacy_option = 'public') AND (release IS NOT NULL AND release > now()) AND (user_id != :user_id) AND (user_id NOT IN (#{friend_user_ids}) ) ) AND #{radius_filter}", user_id: user.id).count
   end
 
   def self.number_of_unreleased_capsule_by_followees(user)
