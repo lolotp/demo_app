@@ -24,7 +24,7 @@ class PublishNonPublicPostLocationJob < Resque::JobWithStatus
       #publish to feed of post owner
       self.save_to_user_feed(post, post.user_id)
       
-      if post.privacy_option == 'friends'
+      if post.privacy_option != 'personal'
         #TODO paste to all friend feed here
         page = 1
         user = User.find(post.user_id)

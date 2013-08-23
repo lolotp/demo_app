@@ -10,6 +10,7 @@ class PostObserver < ActiveRecord::Observer
       Resque.enqueue(PublishPublicPostLocationJob,post.id)
     else
       puts "enqueing task to resque to publish this feed inidividual users' table who have the rights to see the post"
+      Resque.enqueue(PublishNonPublicPostLocationJob, post.id)
     end
 
     #enquing publish to friend feed jobs
