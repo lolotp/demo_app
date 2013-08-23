@@ -38,6 +38,14 @@ class Post < ActiveRecord::Base
     where("( (ban_count) < 2 AND ( user_id IN (#{followee_user_ids}) OR user_id IN (SELECT id FROM users WHERE public = true) ) AND privacy_option = 'public')", 
           user_id: user.id)
   end
+
+  def self.nearby(user, cur_lat, cur_long, radius, page)
+    nearby_filter = gen_nearby_filter(cur_lat, cur_long, radius)
+    public_post_ids = PublicPostLocation.select("post_id").where(" #{nearby_filter}").paginate(:page => page)
+    non_public_post_ids = UserLocationFeed.select("post_id").where("user_id = :user_id AND #{nearby_filter}", :user_id => user.id).paginate( :page => page)
+    where(:id => [public_post_ids.to_a, non_public_post_ids.to_a])
+  end
+
   # { :levels => [ { :dist => 2000, :popularity => 0 }, {:dist => 10000, :popularity => 100 } ] }
   def self.from_friends_by_social_radius(user, cur_lat, cur_long, levels)
     friend_user_ids = "SELECT friend_id FROM friendships

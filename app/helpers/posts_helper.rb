@@ -12,6 +12,11 @@ module PostsHelper
     end
     radius_filter
   end
+
+  def gen_nearby_filter(cur_lat, cur_long, radius)
+    nearby_filter = " (earth_box(ll_to_earth(#{cur_lat},#{cur_long}), #{radius}) @> ll_to_earth(latitude, longitude) )"
+    nearby_filter
+  end
   
   def s3_thumbnail_url(post)
     s3 = AWS::S3.new({
