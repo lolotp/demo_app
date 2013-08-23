@@ -35,7 +35,7 @@ class PublishNonPublicPostLocationJob < Resque::JobWithStatus
             self.save_to_user_feed(post, friend.id)
           end #friends.each do
           page = page + 1  
-        end while comments_from_unqiue_users.any? #begin
+        end while friends.any? #begin
       end #if privacy_option == 'friends'
     end #if post
   end
