@@ -28,7 +28,7 @@ class Post < ActiveRecord::Base
   def self.from_friends(user)
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id AND status='accepted'"                
-    where("((ban_count < 2) AND user_id IN (#{friend_user_ids}) AND (privacy_option <> 'personal') )", 
+    where("((ban_count < 2) AND user_id IN (#{friend_user_ids}) AND (privacy_option = 'friends' OR privacy_option = 'public') )", 
           user_id: user.id)
   end
 
@@ -43,7 +43,7 @@ class Post < ActiveRecord::Base
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id AND status='accepted'"
     radius_filter = gen_radius_filter_query(cur_lat, cur_long, levels)
-    where("( (ban_count) < 2 AND #{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'personal') OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) ))", 
+    where("( (ban_count) < 2 AND #{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND (privacy_option = 'friends' OR privacy_option = 'public')) OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) ))", 
           user_id: user.id)
   end
 
