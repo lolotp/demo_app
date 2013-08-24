@@ -10,6 +10,9 @@ class PostsController < ApplicationController
     if (!@post.subject)
       @post.subject = params[:subject]
     end
+    if (params[:send_to_user] and @post.release)
+        @post.privacy_option = "custom " + params[:send_to_user].to_s
+    end
     if @post.save
       flash[:success] = "Review posted"
       #if request is a time capsule and request specify a receiver, enqueue a job that send the time capsule

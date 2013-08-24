@@ -28,7 +28,7 @@ class Post < ActiveRecord::Base
   def self.from_friends(user)
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id AND status='accepted'"                
-    where("((ban_count < 2) AND user_id IN (#{friend_user_ids}) AND (privacy_option <> 'private') )", 
+    where("((ban_count < 2) AND user_id IN (#{friend_user_ids}) AND (privacy_option <> 'personal') )", 
           user_id: user.id)
   end
 
@@ -43,7 +43,7 @@ class Post < ActiveRecord::Base
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id AND status='accepted'"
     radius_filter = gen_radius_filter_query(cur_lat, cur_long, levels)
-    where("( (ban_count) < 2 AND #{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) ))", 
+    where("( (ban_count) < 2 AND #{radius_filter}) AND ( (user_id IN (#{friend_user_ids}) AND privacy_option <> 'personal') OR (user_id = :user_id) OR (privacy_option = 'public' AND ( (release IS NULL) OR (release < now())) ))", 
           user_id: user.id)
   end
 
@@ -63,7 +63,8 @@ class Post < ActiveRecord::Base
   def self.allowed_to_view_posts(user)
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id AND status='accepted'"
-    where("(user_id IN (#{friend_user_ids}) AND privacy_option <> 'private') OR (user_id = :user_id) OR (privacy_option = 'public')", :user_id => user.id)
+    custom_self_privacy_option = "custom " + user.id.to_s
+    where("(user_id IN (#{friend_user_ids}) AND privacy_option <> 'personal') OR (user_id = :user_id) OR (privacy_option = 'public') OR (privacy_option = '#{custom_self_privacy_option}')", :user_id => user.id)
   end
 
   def as_json(options={})
