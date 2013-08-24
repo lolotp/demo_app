@@ -64,7 +64,7 @@ class Post < ActiveRecord::Base
     friend_user_ids = "SELECT friend_id FROM friendships
                          WHERE user_id = :user_id AND status='accepted'"
     custom_self_privacy_option = "custom " + user.id.to_s
-    where("(user_id IN (#{friend_user_ids}) AND privacy_option <> 'personal') OR (user_id = :user_id) OR (privacy_option = 'public') OR (privacy_option = '#{custom_self_privacy_option}')", :user_id => user.id)
+    where("(privacy_option = 'public') OR (user_id = :user_id)  OR (privacy_option = '#{custom_self_privacy_option}') OR (user_id IN (#{friend_user_ids}) AND privacy_option = 'friends')", :user_id => user.id)
   end
 
   def as_json(options={})
