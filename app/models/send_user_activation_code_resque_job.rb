@@ -17,7 +17,7 @@ class SendUserActivationCodeResqueJob
     url = "https://secure.hoiio.com/open/sms/send?" + params.to_query
     json = ActiveSupport::JSON.decode( open url )
     if json["status"] != "success_ok"
-      raise "job error"
+      raise "job error can't send sms"
     end
   end
 

@@ -7,6 +7,7 @@ require 'bundler/setup'
 Bundler.require(:default)
 
 require 'resque/tasks'
+require 'resque_scheduler/tasks'
 
 DemoApp::Application.load_tasks
 

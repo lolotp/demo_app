@@ -10,6 +10,8 @@ gem "aws-sdk", "~> 1.11.0"
 gem 'delayed_job_active_record'
 gem 'resque', "~> 1.22.0"
 gem 'resque-retry'
+gem 'unicorn'
+gem 'resque-scheduler'
 
 group :development do
   gem 'pg'
