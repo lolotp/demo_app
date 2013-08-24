@@ -14,6 +14,12 @@ DemoApp::Application.load_tasks
 task "resque:setup" do
   require 'resque_scheduler'
   require 'resque/scheduler'
+  
+  ENV["REDISTOGO_URL"] ||= "redis://localhost:6379/"
+
+  uri = URI.parse(ENV["REDISTOGO_URL"])
+  Resque.redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+  
   ENV['QUEUE'] = '*'
   Resque.after_fork = Proc.new { ActiveRecord::Base.establish_connection }
 end
