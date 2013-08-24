@@ -25,7 +25,7 @@ class SessionsController < ApplicationController
       end
     else      
       respond_to do |format|
-        format.json {render json: "Unable to authenticate user", :status => 401}
+        format.json {render json: "Unable to authenticate user, please register an account if you haven't done so :)", :status => 401}
         flash.now[:error] = 'Invalid email/password combination'
         format.html {render 'new'}
       end     
