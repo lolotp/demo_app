@@ -9,9 +9,14 @@ class SendUserActivationCodeResqueJob
 
   def self.perform(user_id, phone_number)
     phone_number = phone_number.to_s
-    if phone_number.start_with?("880") or phone_number.start_with?("650")
-      phone_number = phone_number[0,2] + phone_number[3, phone_number.length - 3]
-      puts "new phone number is " + phone_number.to_s
+    relevant_country_codes = ["886","65"]
+    relevant_country_codes.each do |code|
+      puts "processing code " + code.to_s
+      if phone_number.start_with?(code + "0")
+        phone_number = code + phone_number[code.length + 1, phone_number.length - code.length - 1]
+        puts "new phone number is " + phone_number.to_s
+        break
+      end      
     end
     user = User.find(user_id)
     params = {:app_id => ENV["HOIIO_APP_ID"],
