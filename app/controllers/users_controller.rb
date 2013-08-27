@@ -3,9 +3,9 @@ class UsersController < ApplicationController
   include UsersHelper
   before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, 
                                              :requested_friends, :update, :details, :followees, :activate, :send_activation_code, 
-                                             :user_with_email, :users_with_emails]
+                                             :user_with_email, :users_and_users_relation_with_emails]
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, 
-                                        :requested_friends, :friends, :details, :avatar, :user_with_email, :users_with_emails]
+                                        :requested_friends, :friends, :details, :avatar, :user_with_email, :users_and_users_relation_with_emails]
 
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
@@ -38,17 +38,11 @@ class UsersController < ApplicationController
     end
   end
 
-  def users_with_emails
+  def users_and_users_relation_with_emails
     email_list = params[:email_list]
-    @users = []
-    email_list.each do |email|
-      user = User.find_by_email(email)
-      if user
-        @users = @users + [user]
-      end
-    end
+    @users = User.select("users.*, friendships.status as friend_status").joins("LEFT OUTER JOIN friendships ON (users.id = friendships.user_id AND friendships.friend_id = " + params[:id].to_s + ")").where(:email => email_list)
     respond_to do |format|
-      format.json { render json: @users }
+      format.json { render json: @users, :include_fields => [:friend_status] }
     end
   end
 
@@ -155,7 +149,7 @@ class UsersController < ApplicationController
   def requested_friends
 		@requested_friends = User.select("users.*, friendships.id as friendship_id").joins("INNER JOIN friendships ON users.id = friendships.friend_id").where("friendships.user_id=:user_id AND friendships.status = 'requested'", :user_id => params[:id])
     respond_to do |format|
-      format.json { render json: @requested_friends }
+      format.json { render json: @requested_friends, :include_fields => [:friendship_id] }
     end
   end
 

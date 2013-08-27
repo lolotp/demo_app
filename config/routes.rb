@@ -4,7 +4,6 @@ DemoApp::Application.routes.draw do
   post "microposts/new"
   get  "users/show_mobile"
   get  "users/user_with_email"
-  get  "users/users_with_emails"
 
   resources :users do
     member do
@@ -17,6 +16,7 @@ DemoApp::Application.routes.draw do
       get :amazon_s3_temporary_credentials
       get :details
       get :avatar
+      get :users_and_users_relation_with_emails
       post :activate
       post :send_activation_code
     end

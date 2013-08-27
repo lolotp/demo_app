@@ -146,8 +146,11 @@ class User < ActiveRecord::Base
 
   def as_json(options={})
     json_obj = super(:only => [:name,:email,:id, :updated_at])
-    if (self[:friendship_id])
-      json_obj[:friendship_id] = self[:friendship_id]
+    if (options[:include_fields])
+      fields_to_be_included = options[:include_fields]
+      fields_to_be_included.each do |f|
+        json_obj[f] = self[f]
+      end
     end
     json_obj
     #super(:only => [:name,:email,:id, :updated_at, :friendship_id])
