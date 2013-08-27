@@ -4,6 +4,7 @@ DemoApp::Application.routes.draw do
   post "microposts/new"
   get  "users/show_mobile"
   get  "users/user_with_email"
+  get  "users/users_with_emails"
 
   resources :users do
     member do

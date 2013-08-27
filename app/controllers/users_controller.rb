@@ -1,8 +1,12 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
   include UsersHelper
-  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees, :activate, :send_activation_code, :user_with_email]
-  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details, :avatar, :user_with_email]
+  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, 
+                                             :requested_friends, :update, :details, :followees, :activate, :send_activation_code, 
+                                             :user_with_email, :users_with_emails]
+  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, 
+                                        :requested_friends, :friends, :details, :avatar, :user_with_email, :users_with_emails]
+
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
   
@@ -31,6 +35,20 @@ class UsersController < ApplicationController
     @user = User.find_by_email(params[:email])
     respond_to do |format|
       format.json { render json: @user }
+    end
+  end
+
+  def users_with_emails
+    email_list = params[:email_list]
+    @users = []
+    email_list.each do |email|
+      user = User.find_by_email(email)
+      if user
+        @users = @users + [user]
+      end
+    end
+    respond_to do |format|
+      format.json { render json: @users }
     end
   end
 
