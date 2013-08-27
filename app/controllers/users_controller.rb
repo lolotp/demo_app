@@ -1,8 +1,8 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
   include UsersHelper
-  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees, :activate, :send_activation_code]
-  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details, :avatar]
+  before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, :requested_friends, :update, :details, :followees, :activate, :send_activation_code, :user_with_email]
+  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, :requested_friends, :friends, :details, :avatar, :user_with_email]
   before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
   before_filter :admin_user, only: :destroy
   
@@ -27,8 +27,18 @@ class UsersController < ApplicationController
     end
   end
   
+  def user_with_email
+    @user = User.find_by_email(params[:email])
+    respond_to do |format|
+      format.json { render json: @user }
+    end
+  end
+
   def details
-    @user = User.find_by_id(params[:id])
+    if (params[:id])
+      @user = User.find_by_id(params[:id])
+    end
+
     respond_to do |format|
       format.json { render json: @user }
     end

@@ -3,6 +3,7 @@ DemoApp::Application.routes.draw do
   post "sessions/create"
   post "microposts/new"
   get  "users/show_mobile"
+  get  "users/user_with_email"
 
   resources :users do
     member do
@@ -19,6 +20,7 @@ DemoApp::Application.routes.draw do
       post :send_activation_code
     end
   end
+  
   resources :sessions,   only: [:new, :create, :destroy]
   resources :posts, only: [:create, :destroy, :index, :update] do
     member do
