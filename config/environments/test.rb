@@ -34,6 +34,9 @@ DemoApp::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  # set up default url used in emails to users
+  config.action_mailer.default_url_options = { :host => "localhost:5000" }
   
   require 'bcrypt'
   silence_warnings do
