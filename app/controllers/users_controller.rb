@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   include UsersHelper
   before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, 
                                              :requested_friends, :update, :details, :followees, :activate, :send_activation_code, 
-                                             :user_with_email, :users_and_users_relation_with_emails]
+                                             :user_with_email, :users_and_users_relation_with_emails, :send_reset_password_email]
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, 
                                         :requested_friends, :friends, :details, :avatar, :user_with_email, :users_and_users_relation_with_emails]
 
@@ -53,6 +53,42 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       format.json { render json: @user }
+    end
+  end
+
+  def send_reset_password_email
+    user = User.find_by_email(params[:email])
+    respond_to do |format|
+      if user
+        Resque.enqueue(SendResetPasswordEmailResqueJob, user.id)
+        format.json { render json:"ok" }
+      else
+        format.json { render json:"Email not found", :status => 400 }
+      end
+    end
+  end
+
+  def reset_password
+    remember_token = params[:reset_password_token]
+    @user = User.find_by_remember_token(remember_token)
+    render :layout => false
+  end
+  
+
+  def update_password
+    remember_token = params[:reset_password_token]
+    @user = User.find_by_remember_token(remember_token)
+    if @user
+      @user.password = params[:user][:password] 
+      @user.password_confirmation = params[:user][:password_confirmation]
+      if @user.save
+        flash[:success] = "Password changed successfully"
+        render :layout => false
+      else
+        render 'reset_password', :layout => false  
+      end
+    else
+      render 'reset_password', :layout => false 
     end
   end
   

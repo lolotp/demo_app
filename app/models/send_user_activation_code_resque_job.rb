@@ -3,7 +3,7 @@ require 'resque-retry'
 
 class SendUserActivationCodeResqueJob
   extend Resque::Plugins::Retry
-  @queue = "user_activation"
+  @queue = "user_login"
   
   @retry_limit = 3
 

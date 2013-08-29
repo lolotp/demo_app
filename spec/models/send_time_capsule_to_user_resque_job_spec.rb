@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SendTimeCapsuleToUserJob do
+describe SendTimeCapsuleToUserResqueJob do
   let(:user) { FactoryGirl.create(:user) }
   let(:other_user) {  FactoryGirl.create(:user) }
   before do
@@ -12,7 +12,7 @@ describe SendTimeCapsuleToUserJob do
 
   describe "should send notifications to user if enqueued and carried out correctly" do
     before do
-      SendTimeCapsuleToUserJob.perform(user.id, other_user.id, @post.id)
+      SendTimeCapsuleToUserResqueJob.perform(user.id, other_user.id, @post.id)
     end
 
     subject { other_user }

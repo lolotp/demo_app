@@ -4,6 +4,7 @@ DemoApp::Application.routes.draw do
   post "microposts/new"
   get  "users/show_mobile"
   get  "users/user_with_email"
+  get  "users/send_reset_password_email"
 
   resources :users do
     member do
@@ -17,6 +18,8 @@ DemoApp::Application.routes.draw do
       get :details
       get :avatar
       get :users_and_users_relation_with_emails
+      get  :reset_password
+      post :update_password      
       post :activate
       post :send_activation_code
     end

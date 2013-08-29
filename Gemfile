@@ -12,6 +12,7 @@ gem 'resque', "~> 1.22.0"
 gem 'resque-retry'
 gem 'unicorn'
 gem 'resque-scheduler'
+gem 'aliyun-oss'
 
 group :development do
   gem 'pg'

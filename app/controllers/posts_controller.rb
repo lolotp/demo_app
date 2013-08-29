@@ -17,7 +17,7 @@ class PostsController < ApplicationController
       flash[:success] = "Review posted"
       #if request is a time capsule and request specify a receiver, enqueue a job that send the time capsule
       if (params[:send_to_user] and @post.release)
-        Resque.enqueue_at(@post.release,SendTimeCapsuleToUserJob, @post.user_id, params[:send_to_user], @post.id)
+        Resque.enqueue_at(@post.release,SendTimeCapsuleToUserResqueJob, @post.user_id, params[:send_to_user], @post.id)
       end
       if mobile_device?
         respond_to do |format|

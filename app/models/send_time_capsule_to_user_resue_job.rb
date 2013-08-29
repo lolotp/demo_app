@@ -1,6 +1,6 @@
 require 'resque-retry'
 
-class SendTimeCapsuleToUserJob
+class SendTimeCapsuleToUserResqueJob
   extend Resque::Plugins::Retry unless Rails.env.test?
   @queue = "time_capsule_notification"
   
