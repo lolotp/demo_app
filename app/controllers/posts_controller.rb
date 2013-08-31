@@ -2,7 +2,8 @@ class PostsController < ApplicationController
   include PostsHelper
   before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index, :update]
   before_filter :signed_in_user
-  before_filter :admin_user, :only => [:reports, :media, :thumbnail]
+  before_filter :legal_user, :only => [:media, :thumbnail] #if user has rights to view individual posts
+  before_filter :admin_user, :only => [:reports]
   before_filter :correct_user,  only: [:destroy]
 
   def create
@@ -110,13 +111,19 @@ class PostsController < ApplicationController
   end
 
   def thumbnail
-    post = Post.find(params[:id])
-    redirect_to s3_thumbnail_url(post).to_s
+    if @post.file_url.start_with? "CN"
+      redirect_to oss_thumbnail_url(@post).to_s
+    else
+      redirect_to s3_thumbnail_url(@post).to_s
+    end
   end
 
   def media
-    post = Post.find(params[:id])
-    redirect_to s3_media_url(post).to_s
+    if @post.file_url.start_with? "CN"
+      redirect_to oss_media_url(@post).to_s
+    else
+      redirect_to s3_media_url(@post).to_s
+    end
   end
   
   def reports
@@ -127,6 +134,17 @@ class PostsController < ApplicationController
   end
   
   private 
+    
+    def legal_user
+      if current_user.admin?
+        @post = Post.find_by_id(params[:id])
+      else
+        posts = Post.allowed_to_view_posts(current_user).where(:id => params[:id])
+        @post = posts.first
+      end
+      unauthorized_result if @post.nil?
+    end
+    
     def correct_user
       if current_user.admin?
         return

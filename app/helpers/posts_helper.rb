@@ -1,3 +1,5 @@
+require 'aliyun/oss'
+
 module PostsHelper
   def gen_radius_filter_query(cur_lat, cur_long, levels)
     radius_filter = ""
@@ -22,6 +24,22 @@ module PostsHelper
     object = s3.buckets[ ENV['USER_MEDIA_BUCKET'] ].objects[post.thumbnail_url]
 
     object.url_for(:read,:expires => 20.minutes.from_now, :secure => true )
+  end
+
+  def oss_thumbnail_url(post)
+    Aliyun::OSS::Base.establish_connection!(
+      :access_key_id     => ENV['OSS_ACCESS_KEY_ID'], 
+      :secret_access_key => ENV['OSS_SECRET_ACCESS_KEY']
+    )
+    OSSObject.url_for(post.thumbnail_url, ENV['OSS_BUCKET'], :expires_in => 60 * 20)
+  end
+
+  def oss_media_url(post)
+    Aliyun::OSS::Base.establish_connection!(
+      :access_key_id     => ENV['OSS_ACCESS_KEY_ID'], 
+      :secret_access_key => ENV['OSS_SECRET_ACCESS_KEY']
+    )
+    OSSObject.url_for(post.file_url, ENV['OSS_BUCKET'], :expires_in => 60 * 20) #expire in 20 minutes
   end
 
   def post_thumbnail_image_tag(post)

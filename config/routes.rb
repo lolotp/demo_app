@@ -18,7 +18,9 @@ DemoApp::Application.routes.draw do
       get :details
       get :avatar
       get :users_and_users_relation_with_emails
-      get  :reset_password
+      get :reset_password
+      get :aliyun_oss_credentials
+      
       post :update_password      
       post :activate
       post :send_activation_code

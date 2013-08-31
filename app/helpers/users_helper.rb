@@ -19,6 +19,19 @@ module UsersHelper
     
   end
 
+  def aes256_encrypt(key, data)
+    key = Digest::SHA256.digest(key) if(key.kind_of?(String) && 32 != key.bytesize)
+    aes = OpenSSL::Cipher.new('AES-256-CBC')
+    aes.encrypt
+    aes.key = key
+    aes.update(data) + aes.final
+  end
+  
+  def encrypted_aliyun_oss_credentials(key)
+    data = { :oss_access_key_id => ENV['OSS_ACCESS_KEY_ID'], :oss_secret_access_key => ENV['OSS_SECRET_ACCESS_KEY'] }
+    aes256_encrypt(key, data.to_s)
+  end
+
   def avatar_image_tag(user)
     image_tag(avatar_user_path(user), class: "gravatar", size: "50x50")
   end

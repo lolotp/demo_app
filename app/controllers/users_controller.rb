@@ -1,13 +1,15 @@
 require 'aws-sdk'
 class UsersController < ApplicationController
   include UsersHelper
+
   before_filter :check_for_mobile, :only => [:create, :friends, :show, :find_users, :relation, :amazon_s3_temporary_credentials, 
                                              :requested_friends, :update, :details, :followees, :activate, :send_activation_code, 
-                                             :user_with_email, :users_and_users_relation_with_emails, :send_reset_password_email]
+                                             :user_with_email, :users_and_users_relation_with_emails, :send_reset_password_email, :aliyun_oss_credentials]
   before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy, :friends, :amazon_s3_temporary_credentials, 
-                                        :requested_friends, :friends, :details, :avatar, :user_with_email, :users_and_users_relation_with_emails]
+                                        :requested_friends, :friends, :details, :avatar, :user_with_email, :users_and_users_relation_with_emails,
+                                        :aliyun_oss_credentials]
 
-  before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends]
+  before_filter :correct_user,   only: [:edit, :update, :amazon_s3_temporary_credentials, :requested_friends, :aliyun_oss_credentials]
   before_filter :admin_user, only: :destroy
   
 
@@ -243,6 +245,14 @@ class UsersController < ApplicationController
 			format.json { render json: { :follow => @follow } }
 		end
 	end
+  
+  def aliyun_oss_credentials
+    key = params[:encryption_key]
+    @encrypted_data = encrypted_aliyun_oss_credentials(key)
+    respond_to do |format|
+      format.json { render json: { :credentials => @encrypted_data } }
+    end
+  end
 
   def amazon_s3_temporary_credentials
     my_access_key_id = ENV['S3_KEY']
