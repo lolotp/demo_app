@@ -31,7 +31,7 @@ module PostsHelper
       :access_key_id     => ENV['OSS_ACCESS_KEY_ID'], 
       :secret_access_key => ENV['OSS_SECRET_ACCESS_KEY']
     )
-    OSSObject.url_for(post.thumbnail_url, ENV['OSS_BUCKET'], :expires_in => 60 * 20)
+    Aliyun::OSS::OSSObject.url_for(post.thumbnail_url, ENV['OSS_BUCKET'], :expires_in => 60 * 20)
   end
 
   def oss_media_url(post)
@@ -39,7 +39,7 @@ module PostsHelper
       :access_key_id     => ENV['OSS_ACCESS_KEY_ID'], 
       :secret_access_key => ENV['OSS_SECRET_ACCESS_KEY']
     )
-    OSSObject.url_for(post.file_url, ENV['OSS_BUCKET'], :expires_in => 60 * 20) #expire in 20 minutes
+    Aliyun::OSS::OSSObject.url_for(post.file_url, ENV['OSS_BUCKET'], :expires_in => 60 * 20) #expire in 20 minutes
   end
 
   def post_thumbnail_image_tag(post)
