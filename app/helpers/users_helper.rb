@@ -19,6 +19,19 @@ module UsersHelper
     
   end
 
+  def aes(m,k,t)
+    (aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc').send(m)).key = Digest::SHA256.digest(k)
+    aes.update(t) << aes.final
+  end
+
+  def encrypt(key, text)
+    aes(:encrypt, key, text)
+  end
+
+  def decrypt(key, text)
+    aes(:decrypt, key, text)
+  end
+
   def aes256_encrypt(key, data)
     key = Digest::SHA256.digest(key) if(key.kind_of?(String) && 32 != key.bytesize)
     aes = OpenSSL::Cipher.new('AES-256-CBC')
@@ -29,7 +42,7 @@ module UsersHelper
   
   def encrypted_aliyun_oss_credentials(key)
     data = { :oss_access_key_id => ENV['OSS_ACCESS_KEY_ID'], :oss_secret_access_key => ENV['OSS_SECRET_ACCESS_KEY'] }
-    Base64.encode64(data.to_s).encode('utf-8')
+    Base64.encode64(encrypt(key,data.to_s)).encode('utf-8')
   end
 
   def avatar_image_tag(user)
