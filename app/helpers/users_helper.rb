@@ -29,7 +29,7 @@ module UsersHelper
   
   def encrypted_aliyun_oss_credentials(key)
     data = { :oss_access_key_id => ENV['OSS_ACCESS_KEY_ID'], :oss_secret_access_key => ENV['OSS_SECRET_ACCESS_KEY'] }
-    Base64.encode64(data.to_s).encode('utf-8')
+    Base64.encode64(aes256_encrypt(key, data.to_s)).encode('utf-8')
   end
 
   def avatar_image_tag(user)
