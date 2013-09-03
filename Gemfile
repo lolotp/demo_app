@@ -13,7 +13,7 @@ gem 'resque-retry'
 gem 'unicorn'
 gem 'resque-scheduler'
 gem 'aliyun-oss'
-
+gem 'execjs'
 group :development do
   gem 'pg'
 end

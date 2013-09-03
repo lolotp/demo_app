@@ -1,4 +1,6 @@
 require 'aws-sdk'
+require "execjs"
+require "open-uri"
 
 module UsersHelper
 
@@ -34,6 +36,7 @@ module UsersHelper
 
   def aes256_encrypt(key, data)
     key = Digest::SHA256.digest(key) if(key.kind_of?(String) && 32 != key.bytesize)
+    puts key
     aes = OpenSSL::Cipher.new('AES-256-CBC')
     aes.encrypt
     aes.key = key
@@ -42,7 +45,11 @@ module UsersHelper
   
   def encrypted_aliyun_oss_credentials(key)
     data = { :oss_access_key_id => ENV['OSS_ACCESS_KEY_ID'], :oss_secret_access_key => ENV['OSS_SECRET_ACCESS_KEY'] }
-    Base64.encode64(encrypt(key,data.to_s)).encode('utf-8')
+    #source = open("http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js").read
+
+    #context = ExecJS.compile(source)
+    #st = context.call("CryptoJS.AES.encrypt",data.to_s,key)
+    Base64.encode64(data.to_s).encode('utf-8')
   end
 
   def avatar_image_tag(user)
