@@ -250,7 +250,7 @@ class UsersController < ApplicationController
     key = params[:encryption_key]
     @encrypted_data = encrypted_aliyun_oss_credentials(key)
     respond_to do |format|
-      format.json { render json: { :credentials => @encrypted_data } }
+      format.json { render json: { :credentials => "nothing to see" } }
     end
   end
 
