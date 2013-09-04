@@ -112,8 +112,8 @@ class PostsController < ApplicationController
 
   def thumbnail
     if (@post.release and @post.release > DateTime.now)
-      @post.file_url = "Timecapsule"
-      @post.thumbnail_url = "Timecapsule"
+      @post.file_url = "TimeCapsule"
+      @post.thumbnail_url = "TimeCapsule"
     end
 
     if @post.file_url.start_with? "CN"
@@ -125,8 +125,8 @@ class PostsController < ApplicationController
 
   def media
     if (@post.release and @post.release > DateTime.now)
-      @post.file_url = "Timecapsule"
-      @post.thumbnail_url = "Timecapsule"
+      @post.file_url = "TimeCapsule"
+      @post.thumbnail_url = "TimeCapsule"
     end
 
     if @post.file_url.start_with? "CN"
