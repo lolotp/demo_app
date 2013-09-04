@@ -111,6 +111,11 @@ class PostsController < ApplicationController
   end
 
   def thumbnail
+    if (@post.release > DateTime.now)
+      @post.file_url = "Timecapsule"
+      @post.thumbnail_url = "Timecapsule"
+    end
+
     if @post.file_url.start_with? "CN"
       redirect_to oss_thumbnail_url(@post).to_s
     else
@@ -119,6 +124,11 @@ class PostsController < ApplicationController
   end
 
   def media
+    if (@post.release > DateTime.now)
+      @post.file_url = "Timecapsule"
+      @post.thumbnail_url = "Timecapsule"
+    end
+
     if @post.file_url.start_with? "CN"
       redirect_to oss_media_url(@post).to_s
     else
