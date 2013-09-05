@@ -81,13 +81,6 @@ class Post < ActiveRecord::Base
       end
     end
     json_obj = super
-    if self.file_url.start_with? "CN"
-      #json_obj[:storage_file_url] = s3_media_url(self)
-      json_obj[:storage_thumbnail_url] = s3_thumbnail_url(self)
-    else
-      #json_obj[:storage_file_url] = oss_media_url(self)
-      json_obj[:storage_thumbnail_url] = oss_thumbnail_url(self)
-    end
     json_obj[:author_name] = self.user.name
     json_obj[:author_email] = self.user.email
     json_obj
