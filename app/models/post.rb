@@ -68,18 +68,25 @@ class Post < ActiveRecord::Base
   end
 
   def as_json(options={})
-    json_obj = super
     if (self.ban_count > 1 and ((not options[:current_user_id]) or self.user_id != options[:current_user_id]) )
-      json_obj[:subject] = "Subject hidden because post flagged as inappropriate"
-      json_obj[:content]  = "Content hidden because post flagged as inappropriate"
-      json_obj[:file_url] = "FlaggedPost"
-      json_obj[:thumbnail_url] = "FlaggedPost"
+      self.subject = "Subject hidden because post flagged as inappropriate"
+      self.content  = "Content hidden because post flagged as inappropriate"
+      self.file_url = "FlaggedPost"
+      self.thumbnail_url = "FlaggedPost"
     else
       if (self.release and self.release > DateTime.now)
-        json_obj[:content]  = "Release on " + self.release.to_s()
-        json_obj[:file_url] = "TimeCapsule"
-        json_obj[:thumbnail_url] = "TimeCapsule"
+        self.content  = "Release on " + self.release.to_s()
+        self.file_url = "TimeCapsule"
+        self.thumbnail_url = "TimeCapsule"
       end
+    end
+    json_obj = super
+    if self.file_url.start_with? "CN"
+      json_obj[:storage_file_url] = s3_media_url(self)
+      json_obj[:storage_thumbnail_url] = s3_thumbnail_url(self)
+    else
+      json_obj[:storage_file_url] = oss_media_url(self)
+      json_obj[:storage_thumbnail_url] = oss_thumbnail_url(self)
     end
     json_obj[:author_name] = self.user.name
     json_obj[:author_email] = self.user.email
