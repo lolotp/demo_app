@@ -2,6 +2,7 @@ DemoApp::Application.routes.draw do
 
   post "sessions/create"
   post "microposts/new"
+	post "posts/cnmedia"
   get  "users/show_mobile"
   get  "users/user_with_email"
   get  "users/send_reset_password_email"

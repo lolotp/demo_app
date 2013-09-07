@@ -135,6 +135,40 @@ class PostsController < ApplicationController
       redirect_to s3_media_url(@post).to_s
     end
   end
+
+	def cnmedia
+		imageData = params[:media]
+		key = params[:key]
+		thumbnailData = params[:thumbnailMedia]
+		thumbnailKey = params[:thumbnailKey]
+
+		img = StringIO.new(Base64.decode64(imageData))
+    img.class.class_eval {attr_accessor :original_filename, :content_type}
+    img.original_filename = key+".jpg"
+    img.content_type = "image/jpg"
+
+		thumb = StringIO.new(Base64.decode64(thumbnailData))
+		thumb.class.class_eval {attr_accessor :original_filename, :content_type}
+    thumb.original_filename = key+".jpg"
+    thumb.content_type = "image/jpg"
+
+		imgPath = Rails.root.join('temp', img.original_filename)
+		thumbPath = Rails.root.join('temp', thumb.original_filename)
+
+		File.open(imgPath, 'wb') do |file|
+		  file.write(img.read)
+			Aliyun::OSS::OSSObject.store(key, open(file), ENV['OSS_BUCKET'])
+			#File.delete(file)
+		end
+
+		File.open(thumbPath, 'wb') do |file|
+		  file.write(thumb.read)
+			Aliyun::OSS::OSSObject.store(thumbnailKey, open(file), ENV['OSS_BUCKET'])
+		end
+
+		File.delete(imgPath) if File.exist?(imgPath)
+		File.delete(thumbPath) if File.exist?(thumbPath)
+	end
   
   def reports
     post = Post.find(params[:id])

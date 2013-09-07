@@ -169,14 +169,6 @@ ActiveRecord::Schema.define(:version => 20130815095328) do
   add_index "posts", ["release"], :name => "index_posts_on_release"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at"
 
-  create_table "public_post_locations", :force => true do |t|
-    t.integer  "post_id"
-    t.float    "longitude"
-    t.float    "latitude"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
   create_table "users", :force => true do |t|
     t.string   "name"
     t.string   "email"
