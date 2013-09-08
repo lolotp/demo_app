@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   include PostsHelper
-  before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index, :update]
+  before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index, :update, :cnmedia]
   before_filter :signed_in_user
   before_filter :legal_user, :only => [:media, :thumbnail] #if user has rights to view individual posts
   before_filter :admin_user, :only => [:reports]
@@ -141,16 +141,18 @@ class PostsController < ApplicationController
 		key = params[:key]
 		thumbnailData = params[:thumbnailMedia]
 		thumbnailKey = params[:thumbnailKey]
+		mediaType = params[:mediaType]
+		fileExt = params[:fileExt]
 
 		img = StringIO.new(Base64.decode64(imageData))
     img.class.class_eval {attr_accessor :original_filename, :content_type}
-    img.original_filename = key+".jpg"
-    img.content_type = "image/jpg"
+    img.original_filename = key+fileExt
+    img.content_type = mediaType
 
 		thumb = StringIO.new(Base64.decode64(thumbnailData))
 		thumb.class.class_eval {attr_accessor :original_filename, :content_type}
-    thumb.original_filename = key+".jpg"
-    thumb.content_type = "image/jpg"
+    thumb.original_filename = key+fileExt
+    thumb.content_type = mediaType
 
 		imgPath = Rails.root.join('temp', img.original_filename)
 		thumbPath = Rails.root.join('temp', thumb.original_filename)
@@ -168,6 +170,11 @@ class PostsController < ApplicationController
 
 		File.delete(imgPath) if File.exist?(imgPath)
 		File.delete(thumbPath) if File.exist?(thumbPath)
+
+		respond_to do |format|
+      format.json { render json: "ok" }
+		end
+
 	end
   
   def reports
