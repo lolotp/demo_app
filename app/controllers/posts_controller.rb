@@ -154,8 +154,8 @@ class PostsController < ApplicationController
     thumb.original_filename = key+fileExt
     thumb.content_type = mediaType
 
-		imgPath = Rails.root.join('temp', img.original_filename)
-		thumbPath = Rails.root.join('temp', thumb.original_filename)
+		imgPath = Rails.root.join(img.original_filename)
+		thumbPath = Rails.root.join(thumb.original_filename)
 
 		File.open(imgPath, 'wb') do |file|
 		  file.write(img.read)
