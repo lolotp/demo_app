@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130815095328) do
+ActiveRecord::Schema.define(:version => 20130912133644) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -24,6 +24,19 @@ ActiveRecord::Schema.define(:version => 20130815095328) do
   add_index "comments", ["post_id", "user_id", "created_at"], :name => "index_comments_on_post_id_and_user_id_and_created_at"
   add_index "comments", ["post_id"], :name => "index_comments_on_post_id"
   add_index "comments", ["user_id"], :name => "index_comments_on_user_id"
+
+  create_table "concierge_apps", :force => true do |t|
+    t.string   "iso_country_code"
+    t.string   "category"
+    t.string   "app_store_link"
+    t.string   "google_play_link"
+    t.string   "link"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+  end
+
+  add_index "concierge_apps", ["iso_country_code", "category"], :name => "index_concierge_apps_on_iso_country_code_and_category", :unique => true
+  add_index "concierge_apps", ["iso_country_code"], :name => "index_concierge_apps_on_iso_country_code"
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -168,6 +181,14 @@ ActiveRecord::Schema.define(:version => 20130815095328) do
   add_index "posts", ["privacy_option"], :name => "index_posts_on_privacy_option"
   add_index "posts", ["release"], :name => "index_posts_on_release"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at"
+
+  create_table "public_post_locations", :force => true do |t|
+    t.integer  "post_id"
+    t.float    "longitude"
+    t.float    "latitude"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "users", :force => true do |t|
     t.string   "name"
