@@ -6,7 +6,7 @@ class ConciergeAppsController < ApplicationController
     if params[:iso_country_code]
       @concierge_apps = ConciergeApp.where(:iso_country_code => params[:iso_country_code])
       if @concierge_apps.empty?
-        @concierge_apps = ConciergeApp.where(:iso_country_code => params["global"])
+        @concierge_apps = ConciergeApp.where(:iso_country_code => "global")
       end
     else
       @concierge_apps = ConciergeApp.all
