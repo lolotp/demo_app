@@ -12,7 +12,11 @@ class ConciergeAppsController < ApplicationController
       @concierge_apps = ConciergeApp.all
     end
     respond_to do |format|
-      format.json { render json: @concierge_apps}
+      if params[:iso_country_code]
+        format.json { render json: @concierge_apps, :iso_country_code => params[:iso_country_code] }
+      else
+        format.json { render json: @concierge_apps }
+      end
     end
   end 
 end
