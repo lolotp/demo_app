@@ -1,7 +1,7 @@
 <%= form_for @concierge_app, url: {action: "update"}, html: {class: "nifty_form"} do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
   Country: <%= f.text_field :iso_country_code %>
-  Category: <%= f.select(:category, options_for_select([['Games'], ['Utility'], ['Travel'], ['Emergency'], ['Shopping']])) %>
+  Category: <%= f.select(:category, options_for_select([['Games'], ['Utility'], ['Travel'], ['Emergency'], ['Shopping']], @concierge_app.category)) %>
   Link: <%= f.text_field :app_store_link %>
   <%= f.submit "Edit" %>
 <% end %>
