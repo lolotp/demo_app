@@ -44,7 +44,7 @@ DemoApp::Application.routes.draw do
   resources :landmarks, only: [:create, :index, :show]
   resources :notifications, only: [:update, :create]
 	resources :follows, only: [:create, :destroy]
-  resources :concierge_apps, only: [:index]
+  resources :concierge_apps
 
   root to: 'static_pages#home'
 

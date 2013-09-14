@@ -1,0 +1,13 @@
+<h1>Concierge apps</h1>
+<table border="1px">
+<% @concierge_apps.each do |app|%>
+ <tr><td><%= app.iso_country_code %></td><td><%= app.category %></td><td><%= app.app_store_link %></td> 
+<% if current_user.admin? %>
+<td><%= link_to "Edit", edit_concierge_app_path(app) %></td><td><%= link_to "Delete", concierge_app_path(app.id), :method => :delete %></td>
+<%end%>
+</tr>
+<%end%>
+</table>
+<% if current_user.admin? %>
+<%= link_to "New app", new_concierge_app_path %>
+<% end %>
