@@ -10,8 +10,9 @@ class ConciergeAppsController < ApplicationController
         @concierge_apps = ConciergeApp.where(:iso_country_code => "global")
       end
     else
-      @concierge_apps = ConciergeApp.all
+      @concierge_apps = ConciergeApp.where("")
     end
+    @concierge_apps = @concierge_apps.order(:iso_country_code)
     respond_to do |format|
       if params[:iso_country_code]
         format.json { render json: @concierge_apps, :iso_country_code => params[:iso_country_code] }
