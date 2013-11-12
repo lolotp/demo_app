@@ -42,6 +42,7 @@ class UsersController < ApplicationController
 
   def users_and_users_relation_with_emails
     email_list = params[:email_list]
+    @user = User.find(param[:id])
     @users = User.select("users.*, friendships.status as friend_status").joins("LEFT OUTER JOIN friendships ON (users.id = friendships.user_id AND friendships.friend_id = " + params[:id].to_s + ")").where(:email => email_list)
     respond_to do |format|
       format.json { render json: @users, :include_fields => [:friend_status] }
