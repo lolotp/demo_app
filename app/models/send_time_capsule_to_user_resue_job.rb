@@ -14,7 +14,7 @@ class SendTimeCapsuleToUserResqueJob
     if from_user.friend?(to_user)
       post = Post.find(post_id)
 
-      notification = to_user.notifications.build( :content => "<n3><a href=\"memcap://users/#{from_user.id}\" >#{from_user.name}</a> sent you a <a href=\"memcap://posts/#{post.id}\">time capsule</a>", :viewed => false)
+      notification = to_user.notifications.build( :content => "<n3><a href=\"memcap://users/#{from_user.id}\" >#{from_user.name}</a> sent you a <a href=\"memcap://posts/#{post.id}\">time capsule</a></n3>", :viewed => false)
       if (notification.save)
           puts("successfully saved notification to post owner")
       else
