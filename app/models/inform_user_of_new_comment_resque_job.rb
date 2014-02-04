@@ -44,7 +44,7 @@ class InformUserOfNewCommentResqueJob
           end #if not.save
         end # if id is different
       end #comments_from_unqiue_users.each do
-    end while comments_from_unqiue_users.any? #begin
+    end while comments_from_unique_users.any? #begin
     puts "job ended sucessfully"
   rescue Resque::TermException
     Resque.enqueue(self, comment_id, at_time, should_inform_owner)
