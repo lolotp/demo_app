@@ -20,9 +20,16 @@ class PostsController < ApplicationController
       if (params[:send_to_user] and @post.release)
         Resque.enqueue_at(@post.release,SendTimeCapsuleToUserResqueJob, @post.user_id, params[:send_to_user], @post.id)
       end
-      if (params[:should_sink_to_private])
-        should_sink_to_private = params[:should_sink_to_private]
-        #Resque.enqueue_at(should_sink_to_private, )
+      if (params[:close_time])
+        valid_datetime = true
+        begin
+          should_sink_to_private = params[:close_time].to_time
+        rescue
+          valid_datetime = false
+        end
+        if valid_datetime
+          Resque.enqueue_at(should_sink_to_private, ClosePublicPostResqueJob, @post.id)
+        end
       end
       if mobile_device?
         respond_to do |format|
