@@ -12,6 +12,7 @@ class SessionsController < ApplicationController
         flash.now[:error] = 'Unknown account'
         format.html {render 'new'}
       end
+      return
     end
     if user.authenticate(params[:session][:password])
       if (user.confirmation_code != 0)
