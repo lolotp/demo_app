@@ -6,7 +6,14 @@ class SessionsController < ApplicationController
   
   def create
     user = User.find_by_email(params[:session][:email].downcase)
-    if user && user.authenticate(params[:session][:password])
+    if not user
+      respond_to do |format|
+        format.json {render json: "You haven't registered for an account with this email, would you like to register for one ?", :status => 404 }
+        flash.now[:error] = 'Unknown account'
+        format.html {render 'new'}
+      end
+    end
+    if user.authenticate(params[:session][:password])
       if (user.confirmation_code != 0)
         flash[:error] = "Unactivated account"
         respond_to do |format|
@@ -25,7 +32,7 @@ class SessionsController < ApplicationController
       end
     else      
       respond_to do |format|
-        format.json {render json: "Unable to authenticate user, please register an account if you haven't done so :)", :status => 401}
+        format.json {render json: "Password entered does not match registered email.", :status => 401}
         flash.now[:error] = 'Invalid email/password combination'
         format.html {render 'new'}
       end     
