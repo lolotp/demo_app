@@ -10,17 +10,17 @@ describe CommentObserver do
     @post.save
     @comment = other_user.comments.build(content: "hahaha")
     @comment.post_id = @post.id
-    @count = Resque.info[:pending]
-    
   end
 
   subject {Resque.info[:pending]}
 
   it "when comment is saved to database" do
+    OriginalResque = Resque
     Resque = double("Resque")
     Comment.observers.enable :comment_observer
     Resque.should_receive(:enqueue).with(InformUserOfNewCommentResqueJob, anything(), anything(), true)
     @comment.save
+    Resque = OriginalResque
   end
     
 end

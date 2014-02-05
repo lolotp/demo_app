@@ -256,7 +256,9 @@ describe User do
     before do
       @user.save
       post = FactoryGirl.create(:post, user: @user, content: "Dolor sit amet") 
-      comment = FactoryGirl.create(:comment, user: other_user, post: post)
+      Comment.observers.enable :comment_observer do
+        comment = FactoryGirl.create(:comment, user: other_user, post: post)
+      end
     end
     
     describe "notification for other user should exist" do

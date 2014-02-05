@@ -48,4 +48,7 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+
+  #inline resque for integration testing
+  Resque.inline = true
 end

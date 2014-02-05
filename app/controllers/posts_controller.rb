@@ -20,6 +20,10 @@ class PostsController < ApplicationController
       if (params[:send_to_user] and @post.release)
         Resque.enqueue_at(@post.release,SendTimeCapsuleToUserResqueJob, @post.user_id, params[:send_to_user], @post.id)
       end
+      if (params[:should_sink_to_private])
+        should_sink_to_private = params[:should_sink_to_private]
+        #Resque.enqueue_at(should_sink_to_private, )
+      end
       if mobile_device?
         respond_to do |format|
           format.json { render json:"ok" }

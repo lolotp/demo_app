@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
     user = User.find_by_email(params[:session][:email].downcase)
     if not user
       respond_to do |format|
-        format.json {render json: "You haven't registered for an account with this email, would you like to register for one ?", :status => 404 }
+        format.json {render json: "You haven't registered for an account with this email, would you like to register for one?", :status => 404 }
         flash.now[:error] = 'Unknown account'
         format.html {render 'new'}
       end
