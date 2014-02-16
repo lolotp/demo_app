@@ -20,14 +20,16 @@ class PostsController < ApplicationController
       if (params[:send_to_user] and @post.release)
         Resque.enqueue_at(@post.release,SendTimeCapsuleToUserResqueJob, @post.user_id, params[:send_to_user], @post.id)
       end
-      if (params[:close_minute_duration] and params[:close_minute_duration] > 0)
+      if (params[:close_minute_duration])
         valid_datetime = true
+        number_of_minutes = 0
         begin
-          should_sink_to_private = Time.now + params[:close_minute_duration] * 60
+          number_of_minutes = params[:close_minute_duration].to_i
+          should_sink_to_private = Time.now + number_of_minutes * 60
         rescue
           valid_datetime = false
         end
-        if valid_datetime
+        if valid_datetime and number_of_minutes > 0
           Resque.enqueue_at(should_sink_to_private, ClosePublicPostResqueJob, @post.id)
         end
       end
