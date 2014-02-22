@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130915053214) do
+ActiveRecord::Schema.define(:version => 20140222144009) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -68,6 +68,13 @@ ActiveRecord::Schema.define(:version => 20130915053214) do
   end
 
   add_index "dungeons", ["user_id", "created_at"], :name => "index_dungeons_on_user_id_and_created_at"
+
+  create_table "events", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "follows", :force => true do |t|
     t.integer  "user_id"
@@ -189,6 +196,19 @@ ActiveRecord::Schema.define(:version => 20130915053214) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "talks", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.string   "topics"
+    t.integer  "event_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "talks", ["event_id"], :name => "index_talks_on_event_id"
 
   create_table "users", :force => true do |t|
     t.string   "name"

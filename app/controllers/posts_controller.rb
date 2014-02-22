@@ -149,46 +149,46 @@ class PostsController < ApplicationController
     end
   end
 
-	def cnmedia
-		imageData = params[:media]
-		key = params[:key]
-		thumbnailData = params[:thumbnailMedia]
-		thumbnailKey = params[:thumbnailKey]
-		mediaType = params[:mediaType]
-		fileExt = params[:fileExt]
+  def cnmedia
+    imageData = params[:media]
+    key = params[:key]
+    thumbnailData = params[:thumbnailMedia]
+    thumbnailKey = params[:thumbnailKey]
+    mediaType = params[:mediaType]
+    fileExt = params[:fileExt]
 
-		img = StringIO.new(Base64.decode64(imageData))
+    img = StringIO.new(Base64.decode64(imageData))
     img.class.class_eval {attr_accessor :original_filename, :content_type}
     img.original_filename = key+fileExt
     img.content_type = mediaType
 
-		thumb = StringIO.new(Base64.decode64(thumbnailData))
-		thumb.class.class_eval {attr_accessor :original_filename, :content_type}
+    thumb = StringIO.new(Base64.decode64(thumbnailData))
+    thumb.class.class_eval {attr_accessor :original_filename, :content_type}
     thumb.original_filename = key+fileExt
     thumb.content_type = mediaType
 
-		imgPath = Rails.root.join(img.original_filename)
-		thumbPath = Rails.root.join(thumb.original_filename)
+    imgPath = Rails.root.join(img.original_filename)
+    thumbPath = Rails.root.join(thumb.original_filename)
 
-		File.open(imgPath, 'wb') do |file|
-		  file.write(img.read)
-			Aliyun::OSS::OSSObject.store(key, open(file), ENV['OSS_BUCKET'])
+    File.open(imgPath, 'wb') do |file|
+      file.write(img.read)
+      Aliyun::OSS::OSSObject.store(key, open(file), ENV['OSS_BUCKET'])
 			#File.delete(file)
-		end
+    end
 
-		File.open(thumbPath, 'wb') do |file|
-		  file.write(thumb.read)
-			Aliyun::OSS::OSSObject.store(thumbnailKey, open(file), ENV['OSS_BUCKET'])
-		end
+    File.open(thumbPath, 'wb') do |file|
+      file.write(thumb.read)
+      Aliyun::OSS::OSSObject.store(thumbnailKey, open(file), ENV['OSS_BUCKET'])
+    end
 
-		File.delete(imgPath) if File.exist?(imgPath)
-		File.delete(thumbPath) if File.exist?(thumbPath)
+    File.delete(imgPath) if File.exist?(imgPath)
+    File.delete(thumbPath) if File.exist?(thumbPath)
 
-		respond_to do |format|
+    respond_to do |format|
       format.json { render json: "ok" }
-		end
+    end
 
-	end
+  end
   
   def reports
     post = Post.find(params[:id])

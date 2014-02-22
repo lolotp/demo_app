@@ -45,6 +45,9 @@ DemoApp::Application.routes.draw do
   resources :notifications, only: [:update, :create]
 	resources :follows, only: [:create, :destroy]
   resources :concierge_apps
+  resources :events, only: [:create, :show, :new, :destroy] do
+    resources :talks, only: [:create, :show, :new, :destroy]
+  end
 
   root to: 'static_pages#home'
 
