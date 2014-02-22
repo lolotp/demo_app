@@ -6,6 +6,7 @@ DemoApp::Application.routes.draw do
   get  "users/show_mobile"
   get  "users/user_with_email"
   get  "users/send_reset_password_email"
+  get "talks/topics"
 
   resources :users do
     member do
@@ -45,7 +46,7 @@ DemoApp::Application.routes.draw do
   resources :notifications, only: [:update, :create]
 	resources :follows, only: [:create, :destroy]
   resources :concierge_apps
-  resources :events, only: [:create, :show, :new, :destroy] do
+  resources :events, only: [:index, :create, :show, :new, :destroy] do
     resources :talks, only: [:create, :show, :new, :destroy]
   end
 

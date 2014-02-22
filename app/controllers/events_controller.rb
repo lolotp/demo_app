@@ -3,6 +3,14 @@ class EventsController < ApplicationController
   def new
   end
 
+  def index
+    @events = Event.all
+    respond_to do |format|
+      format.html { render json: @events } 
+      format.json { render json: @events }   
+    end
+  end
+
   def create
     @event = Event.new(params[:event])
     if @event.save
