@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140222161713) do
+ActiveRecord::Schema.define(:version => 20140222162511) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -207,6 +207,7 @@ ActiveRecord::Schema.define(:version => 20140222161713) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
     t.string   "address"
+    t.integer  "postal_code"
   end
 
   add_index "talks", ["event_id"], :name => "index_talks_on_event_id"
