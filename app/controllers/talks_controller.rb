@@ -41,4 +41,14 @@ class TalksController < ApplicationController
       format.json { render json: @talks }
     end
   end
+
+  def destroy
+    @event = Event.find(params[:event_id])
+    @talk = @event.talks.find(params[:id])
+    @talk.destroy
+    respond_to do |format|
+      format.html { render json: @talk }
+      format.json { render json: @talk }
+    end  
+  end
 end
