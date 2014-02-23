@@ -1,4 +1,5 @@
 class EventsController < ApplicationController
+  after_filter :set_access_control_headers
 
   def new
   end
@@ -37,5 +38,10 @@ class EventsController < ApplicationController
       format.html { render json: @event }
       format.json { render json: @event }
     end  
+  end
+
+  def set_access_control_headers
+    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Request-Method']= '*'
   end
 end
