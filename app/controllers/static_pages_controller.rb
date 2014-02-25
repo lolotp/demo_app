@@ -45,6 +45,9 @@ class StaticPagesController < ApplicationController
     render :layout => false
   end
 
+  def test
+  end
+
   def contact
   end
 end

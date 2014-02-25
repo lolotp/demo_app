@@ -56,6 +56,7 @@ DemoApp::Application.routes.draw do
   match '/about',   to: 'static_pages#about'
   match '/contact', to: 'static_pages#contact'
   match '/terms_of_use', to: 'static_pages#terms_of_use'
+  match '/test', to: 'static_pages#test'
 
   match '/signup',  to: 'users#new'
   match '/signin',  to: 'sessions#new'
