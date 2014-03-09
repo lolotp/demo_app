@@ -30,7 +30,7 @@ DemoApp::Application.routes.draw do
   end
   
   resources :sessions,   only: [:new, :create, :destroy]
-  resources :posts, only: [:create, :destroy, :index, :update] do
+  resources :posts, only: [:create, :destroy, :index, :update, :show] do
     member do
       get :comments
       get :reports

@@ -1,8 +1,8 @@
 class PostsController < ApplicationController
   include PostsHelper
-  before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index, :update, :cnmedia]
+  before_filter :check_for_mobile, :only => [:create, :comments, :destroy, :index, :update, :cnmedia, :show]
   before_filter :signed_in_user
-  before_filter :legal_user, :only => [:media, :thumbnail] #if user has rights to view individual posts
+  before_filter :legal_user, :only => [:media, :thumbnail, :show] #if user has rights to view individual posts
   before_filter :admin_user, :only => [:reports]
   before_filter :correct_user,  only: [:destroy]
 
@@ -76,6 +76,12 @@ class PostsController < ApplicationController
       end
     else
       redirect_to root_url
+    end
+  end
+
+  def show
+    respond_to do |format|
+      format.json { render json: @post }
     end
   end
 
