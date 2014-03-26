@@ -63,7 +63,11 @@ class UsersController < ApplicationController
     user = User.find_by_email(params[:email])
     respond_to do |format|
       if user
-        Resque.enqueue(SendResetPasswordEmailResqueJob, user.id)
+        begin        
+          Resque.enqueue(SendResetPasswordEmailResqueJob, user.id)
+        rescue
+          logger.debug "failed to enqueue resque job"
+        end
         format.json { render json:"ok" }
       else
         format.json { render json:"Email not found", :status => 400 }
@@ -99,7 +103,11 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     @user.phone_number = params[:phone_number]
     if @user.save
-      Resque.enqueue(SendUserActivationCodeResqueJob, @user.id, @user.phone_number)
+      begin
+        Resque.enqueue(SendUserActivationCodeResqueJob, @user.id, @user.phone_number)
+      rescue
+        logger.debug "failed to enqueue resque job"
+      end
       respond_to do |format|
         format.json { render json: { :name => @user.name, :user => @user } }
         format.html { redirect_to root_path }
@@ -118,7 +126,11 @@ class UsersController < ApplicationController
       phone_number = params[:phone_number]
       update_result = user.update_attribute(:phone_number, phone_number)
       if (update_result)
-        Resque.enqueue(SendUserActivationCodeResqueJob, user.id, phone_number)
+        begin
+          Resque.enqueue(SendUserActivationCodeResqueJob, user.id, phone_number)
+        rescue
+          logger.debug "failed to enqueue resque job"
+        end
         respond_to do |format|
           format.json {render json:"ok"}
         end
@@ -291,7 +303,11 @@ class UsersController < ApplicationController
     code = params[:confirmation_code].to_i
     if (user.updated_at < 1.hour.ago)
       user.update_attribute(:confirmation_code, Random.new.rand(100_000..999_999))
-      Resque.enqueue(SendUserActivationCodeResqueJob, user.id, user.phone_number)
+      begin
+        Resque.enqueue(SendUserActivationCodeResqueJob, user.id, user.phone_number)
+      rescue
+        logger.debug "failed to enqueue resque job"
+      end
       respond_to do |format|
         format.json { render json: {:error_message => "Your code has expired. We have sent you a new code."}, :status => 401 }
       end

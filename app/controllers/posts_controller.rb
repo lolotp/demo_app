@@ -18,7 +18,11 @@ class PostsController < ApplicationController
       flash[:success] = "Review posted"
       #if request is a time capsule and request specify a receiver, enqueue a job that send the time capsule
       if (params[:send_to_user] and @post.release)
-        Resque.enqueue_at(@post.release,SendTimeCapsuleToUserResqueJob, @post.user_id, params[:send_to_user], @post.id)
+        begin
+          Resque.enqueue_at(@post.release,SendTimeCapsuleToUserResqueJob, @post.user_id, params[:send_to_user], @post.id)
+        rescue
+          logger.debug "failed to enqueue resque job"
+        end
       end
       if (params[:close_minute_duration])
         valid_datetime = true
@@ -30,7 +34,11 @@ class PostsController < ApplicationController
           valid_datetime = false
         end
         if valid_datetime and number_of_minutes > 0
-          Resque.enqueue_at(should_sink_to_private, ClosePublicPostResqueJob, @post.id)
+          begin
+            Resque.enqueue_at(should_sink_to_private, ClosePublicPostResqueJob, @post.id)
+          rescue
+            logger.debug "failed to enqueue resque job"
+          end
         end
       end
       if mobile_device?
