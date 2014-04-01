@@ -6,6 +6,9 @@ class InformUserOfNewPostResqueJob
   def self.perform(post_id)
     post = Post.find(post_id)
     user = post.user
+    if post.privacy_option == 'personal'
+      return
+    end
     user.friends.each do |f|
       uri = URI.parse(ENV['PUSH_URL'])
       http = Net::HTTP.new(uri.host, uri.port)
