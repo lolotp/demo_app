@@ -1,6 +1,6 @@
 class InformUserOfNewCommentResqueJob
   
-  @queue = "comment_notification"
+  @queue = "content_notification"
 
   def self.perform(comment_id, at_time, should_inform_owner)
     puts "beginning job"

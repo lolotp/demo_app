@@ -2,6 +2,8 @@ require 'resque-retry'
 
 class InformUserOfNewPostResqueJob
   extend Resque::Plugins::Retry unless Rails.env.test?
+
+  @queue = "content_notification"
   
   def self.perform(post_id)
     post = Post.find(post_id)
