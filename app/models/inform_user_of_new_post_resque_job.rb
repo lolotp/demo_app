@@ -32,6 +32,7 @@ class InformUserOfNewPostResqueJob
       user.followers.each do |follower|
         if not (friend_list_ids.include? follower.id)        
           self.send_notification(user, follower, post)
+        end
       end
     end
   end
