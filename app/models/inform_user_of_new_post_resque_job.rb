@@ -4,24 +4,32 @@ class InformUserOfNewPostResqueJob
   extend Resque::Plugins::Retry unless Rails.env.test?
 
   @queue = "content_notification"
-  
+
+  def self.send_notification (from_user, to_user, post)
+    uri = URI.parse(ENV['PUSH_URL'])
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    message = "#{from_user.name} just posted a new picture/video"
+    message_url = "memcap://posts/#{post.id}"
+    data = { :appid => ENV["PUSH_APPID"], :username => ENV["PUSH_USERNAME"], :password => ENV["PUSH_PASSWORD"], :message => message, :messageurl => message_url, :id_fordevice => to_user.email }
+    request = Net::HTTP::Post.new(uri.path, {})
+    request.body = data.to_query
+    response = http.request(request)
+  end  
+
   def self.perform(post_id)
     post = Post.find(post_id)
     user = post.user
-    if post.privacy_option == 'personal'
-      return
+    if post.privacy_option != 'personal'
+      user.friends.each do |f|
+        self.send_notification(user, f, post)
+      end
     end
-    user.friends.each do |f|
-      uri = URI.parse(ENV['PUSH_URL'])
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      message = "#{user.name} just posted a new picture/video"
-      message_url = "memcap://posts/#{post.id}"
-      data = { :appid => ENV["PUSH_APPID"], :username => ENV["PUSH_USERNAME"], :password => ENV["PUSH_PASSWORD"], :message => message, :messageurl => message_url, :id_fordevice => f.email }
-      request = Net::HTTP::Post.new(uri.path, {})
-      request.body = data.to_query
-      response = http.request(request)    
+    if post.privacy_option == 'public'
+      user.followers.each do |follower|
+        self.send_notification(user, follower, post)
+      end
     end
   end
 end
