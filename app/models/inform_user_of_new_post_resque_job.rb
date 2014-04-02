@@ -21,14 +21,17 @@ class InformUserOfNewPostResqueJob
   def self.perform(post_id)
     post = Post.find(post_id)
     user = post.user
+    friend_list_ids = []
     if post.privacy_option != 'personal'
       user.friends.each do |f|
         self.send_notification(user, f, post)
+        friend_list_ids += [f.id]
       end
     end
     if post.privacy_option == 'public'
       user.followers.each do |follower|
-        self.send_notification(user, follower, post)
+        if not (friend_list_ids.include? follower.id)        
+          self.send_notification(user, follower, post)
       end
     end
   end
