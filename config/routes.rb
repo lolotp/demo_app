@@ -49,6 +49,7 @@ DemoApp::Application.routes.draw do
   resources :events, only: [:index, :create, :show, :new, :destroy] do
     resources :talks, only: [:create, :show, :new, :destroy]
   end
+  resources :content_recommendation_config
 
   root to: 'static_pages#home'
 
