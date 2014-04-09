@@ -1,5 +1,7 @@
 require 'resque-retry'
 
+INF = 1000000000
+
 class InformUserOfNewPostResqueJob
   extend Resque::Plugins::Retry unless Rails.env.test?
 
@@ -21,17 +23,27 @@ class InformUserOfNewPostResqueJob
   def self.perform(post_id)
     post = Post.find(post_id)
     user = post.user
+
     friend_list_ids = []
     if post.privacy_option != 'personal'
-      user.friends.each do |f|
-        self.send_notification(user, f, post)
-        friend_list_ids += [f.id]
+      limit = REDIS_WORKER.get('FRIEND_COUNT_SEND_NOTIFICATION_LIMIT')
+      limit = limit == nil ? INF : limit.to_i()
+      if user.friends.count <= limit
+        user.friends.each do |f|
+            self.send_notification(user, f, post)
+          friend_list_ids += [f.id]
+        end
       end
     end
+
     if post.privacy_option == 'public'
-      user.followers.each do |follower|
-        if not (friend_list_ids.include? follower.id)        
-          self.send_notification(user, follower, post)
+      limit = REDIS_WORKER.get('FOLLOW_COUNT_SEND_NOTIFICATION_LIMIT')
+      limit = limit == nil ? INF : limit.to_i()
+      if user.followers.count <= limit
+        user.followers.each do |follower|
+          if not (friend_list_ids.include? follower.id)        
+            self.send_notification(user, follower, post)
+          end
         end
       end
     end
